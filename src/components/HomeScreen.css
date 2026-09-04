@@ -103,6 +103,40 @@
   background: #fbf7ec;
 }
 
+.home-stats {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f2e8cf;
+  border-radius: 10px;
+}
+
+.home-stats-title {
+  font-weight: 700;
+  color: #4a4436;
+}
+
+.home-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px 12px;
+  font-size: 13px;
+  color: #5c5342;
+}
+
+.home-stats-reset {
+  align-self: flex-start;
+  border: 1px solid #c9bfa4;
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #7a4f2a;
+}
+
 .home-foot {
   text-align: center;
   color: #8a8070;

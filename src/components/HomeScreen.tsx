@@ -21,6 +21,8 @@ interface HomeScreenProps {
   onToggleSound: () => void
   isSea: boolean
   onStopSea: () => void
+  stats: { total: number; whiteWins: number; blackWins: number; streak: number; streakPlayer?: 'white' | 'black' }
+  onResetStats: () => void
 }
 
 /** 变体选项（与 App 一致） */
@@ -40,6 +42,7 @@ export function HomeScreen(props: HomeScreenProps) {
     onVariant, onAiLevel, onMode, onPlayerColor, onWinsToWin,
     onStart, onTutorial, onRules, onLoad, onSave,
     soundOn, onToggleSound, isSea, onStopSea,
+    stats, onResetStats,
   } = props
 
   return (
@@ -111,6 +114,22 @@ export function HomeScreen(props: HomeScreenProps) {
             <option value={3}>先赢 3 局</option>
             <option value={5}>先赢 5 局</option>
           </select>
+        </div>
+
+        <div className="home-stats">
+          <div className="home-stats-title">📊 战绩统计</div>
+          <div className="home-stats-grid">
+            <span>总局数：<b>{stats.total}</b></span>
+            <span>白马胜：<b>{stats.whiteWins}</b></span>
+            <span>黑马胜：<b>{stats.blackWins}</b></span>
+            <span>
+              连胜：
+              <b>
+                {stats.streak}{stats.streakPlayer ? `（${stats.streakPlayer === 'white' ? '白马' : '黑马'}）` : ''}
+              </b>
+            </span>
+          </div>
+          <button className="home-stats-reset" onClick={onResetStats}>清除战绩</button>
         </div>
       </div>
 

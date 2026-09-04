@@ -18,6 +18,8 @@ import {
 } from './game'
 import { TUT_LESSONS, createLessonState, getLesson } from './game/tutorial'
 import { sfx } from './game/sfx'
+import { loadStats, recordResult, resetStats } from './game/stats'
+import type { MatchStats } from './game/stats'
 
 const TUTORIAL_KEY = 'shuanglu.tutorialSeen'
 
@@ -81,6 +83,13 @@ export default function App() {
   const [showRules, setShowRules] = useState(false)
   const [rollKey, setRollKey] = useState(0)
   const [soundOn, setSoundOn] = useState(() => !sfx.isMuted())
+  const [stats, setStats] = useState<MatchStats>(() => {
+    try {
+      return loadStats()
+    } catch {
+      return { total: 0, whiteWins: 0, blackWins: 0, streak: 0 }
+    }
+  })
   const busyRef = useRef(false)
 
   // 音效：首次用户交互后解锁 AudioContext
@@ -133,6 +142,11 @@ export default function App() {
     fetch('/__shutdown__', { method: 'GET' })
       .then(() => flashHint('本地服务将在片刻后退出（可关闭此页面）'))
       .catch(() => flashHint('当前非离线模式，无需退出服务'))
+  }
+
+  const handleResetStats = () => {
+    setStats(resetStats())
+    flashHint('战绩已清零')
   }
 
   // 热座：双方都是人类（本机轮流，隐藏 AI）；PVE：只有执子方是人类
@@ -218,10 +232,12 @@ export default function App() {
     }
   }, [state, humanTurn, legal, aiLevel, replayMode, mode, tut])
 
-  // ---------- 终局计筹 ----------
+  // ---------- 终局计筹 + 战绩 ----------
   useEffect(() => {
     if (state.phase === 'ended' && state.winner) {
       sfx.win()
+      recordResult(state.winner)
+      setStats(loadStats())
       setMatchScore((sc) => ({
         ...sc,
         [state.winner!]: sc[state.winner!] + (state.doubled ? 2 : 1),
@@ -555,6 +571,8 @@ export default function App() {
           soundOn={soundOn}
           isSea={isSea}
           onStopSea={stopSeaService}
+          stats={stats}
+          onResetStats={handleResetStats}
         />
         {/* 读档用的隐藏 input，供主菜单调用 */}
         <input
