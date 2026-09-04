@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { Board } from './components/Board'
+import { Tutorial } from './components/Tutorial'
 import type { Die, GameOptions, GameState, Player } from './game'
 import {
   createInitialState,
@@ -12,6 +13,8 @@ import {
   serializeState,
   loadState,
 } from './game'
+
+const TUTORIAL_KEY = 'shuanglu.tutorialSeen'
 
 function makeDice(count: 2 | 3 = 2): Die[] {
   const d = (): Die => (1 + Math.floor(Math.random() * 6)) as Die
@@ -59,6 +62,13 @@ export default function App() {
   const [winsToWin, setWinsToWin] = useState(1)
   const [replayMode, setReplayMode] = useState(false)
   const [replayStep, setReplayStep] = useState(0)
+  const [showTutorial, setShowTutorial] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(TUTORIAL_KEY) !== '1'
+    } catch {
+      return true
+    }
+  })
   const busyRef = useRef(false)
 
   // 热座：双方都是人类（本机轮流，隐藏 AI）；PVE：只有执子方是人类
@@ -252,6 +262,15 @@ export default function App() {
 
   const status = statusText(state, matchScore, winsToWin)
 
+  const closeTutorial = () => {
+    setShowTutorial(false)
+    try {
+      localStorage.setItem(TUTORIAL_KEY, '1')
+    } catch {
+      /* ignore */
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -310,6 +329,7 @@ export default function App() {
         </div>
 
         <button onClick={startNewGame}>新的一局</button>
+        <button onClick={() => setShowTutorial(true)}>教学</button>
         <button onClick={undo} disabled={history.length === 0}>悔棋</button>
         <button onClick={enterReplay} disabled={history.length === 0}>复盘</button>
         <button onClick={saveToFile}>存档</button>
@@ -350,6 +370,8 @@ export default function App() {
         <span>离盘：白 {state.borneOff.white} / 黑 {state.borneOff.black}</span>
         <span className="score">比分：白 {matchScore.white} − {matchScore.black} 黑</span>
       </div>
+
+      <Tutorial open={showTutorial} onClose={closeTutorial} />
     </div>
   )
 }
