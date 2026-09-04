@@ -1,7 +1,7 @@
 # ===========================================================================
 # 双陆棋 · Release：打 tag（v*）时构建离线单文件 exe 并发布到 GitHub Release
 # 触发：push 标签 v1.0.0 / v0.2.0 等
-# 产出：dist-app/双陆棋.exe + 停止双陆棋.exe 附加到 Release 页面
+# 产出：Release 附件 —— shuanglu.exe + stop-shuanglu.exe（ASCII 名避免 asset 标签问题）
 # ===========================================================================
 name: Release
 
@@ -9,7 +9,7 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch: # 允许手动触发（用当前 commit 打 Release）
+  workflow_dispatch: # 允许手动触发
 
 permissions:
   contents: write
@@ -34,19 +34,28 @@ jobs:
       - name: Build SEA executables
         run: node scripts/build-sea.mjs
 
+      # 重命名为 ASCII（Release 资产标签兼容性）
+      - name: Rename to ASCII
+        shell: pwsh
+        run: |
+          Copy-Item "dist-app/双陆棋.exe" dist-app/shuanglu.exe -Force
+          Copy-Item "dist-app/停止双陆棋.exe" dist-app/stop-shuanglu.exe -Force
+
       - name: Upload executables
         uses: actions/upload-artifact@v4
         with:
           name: shuanglu-win-executables
           path: |
-            dist-app/双陆棋.exe
-            dist-app/停止双陆棋.exe
+            dist-app/shuanglu.exe
+            dist-app/stop-shuanglu.exe
           if-no-files-found: error
 
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     needs: build-sea
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Download executables
         uses: actions/download-artifact@v4
@@ -54,11 +63,11 @@ jobs:
           name: shuanglu-win-executables
           path: dist-app
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist-app/双陆棋.exe
-            dist-app/停止双陆棋.exe
-          generate_release_notes: true
-          name: 双陆棋 ${{ github.ref_name }}
+      # 用 gh CLI 创建 Release 并上传资产（对文件名/标签处理更稳）
+      - name: Create Release and upload assets
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            dist-app/shuanglu.exe dist-app/stop-shuanglu.exe \
+            --repo "${{ github.repository }}" \
+            --title "双陆棋 ${{ github.ref_name }}" \
+            --generate-notes
