@@ -1,148 +1,152 @@
-# 双陆棋 · 打双陆
+# 🀄 双陆棋 · 打双陆 (Chinese Backgammon)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/MiG144/shuanglu/deploy.yml?label=build%20%26%20deploy)](https://github.com/MiG144/shuanglu/actions)
+[![Version](https://img.shields.io/badge/规则-V0.3-green.svg)](docs/rules/shuanglu-rules-v0.3.md)
 [![React](https://img.shields.io/badge/React-18-61dafb.svg)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6.svg)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff.svg)](https://vite.dev)
-[![在线试玩](https://img.shields.io/badge/%F0%9F%8E%AE%20Play-https%3A%2F%2Fmig144.github.io%2Fshuanglu%2F-brightgreen)](https://mig144.github.io/shuanglu/)
+[![📖 文档索引](https://img.shields.io/badge/📖-Documentation-blue.svg)](docs/README.md)
 
-中式双陆棋（打双陆）Web 小游戏。以宋代洪遵《谱双》五卷为规则依据——规则原文按**《欣赏编》十四卷（明·沈津编，明正德六年刊本）**扫描本识别核对，并以识典古籍电子本（翁同龢清抄本）互校。
-支持 PVE（人机对战）与 PVP（本地热座），内置新手教学与互动式实战教学。
+**中式双陆棋（打双陆）Web 游戏** —— 依据宋代洪遵《谱双》五卷规则原典，以《欣赏编》十四卷（明正德六年刊本）扫描本识别核对。人机对战（PVE）· 本地双人（PVP）· 新手教学与互动式实战教学，规则引擎纯逻辑、可测试、可序列化。
 
-技术栈：**React + TypeScript + Vite**（规则引擎为纯逻辑、可测试、可序列化）。
+## 目录
+
+- [✨ 特性](#-特性)
+- [🎮 在线试玩](#-在线试玩)
+- [🚀 快速开始](#-快速开始)
+- [🎯 玩法](#-玩法)
+- [📚 文档](#-文档)
+- [🧩 技术栈与架构](#-技术栈与架构)
+- [✅ 测试](#-测试)
+- [🔧 开发与发布](#-开发与发布)
+- [🤝 贡献](#-贡献)
+- [📄 许可](#-许可)
+
+## ✨ 特性
+
+- **双模式对战** — 人机对战（可执白/执黑，AI 随机/启发式）· 本地双人热座（PVP）
+- **六种变体** — 平双陆（默认）· 回回（任意出两马）· 三梁/大食（三骰）· 佛（十二马）· 下赞（双采赏一掷），另预留共 14 种变体接口
+- **完整对局功能** — 自动掷骰 · 轮空自动跳过 · 悔棋（任意步）· 计筹多局 · 存档（localStorage + JSON 导出/读入）· 复盘（快照回放）
+- **新手友好** — 图解规则手册 + **互动式实战教学**（5 课：走子/打马/入局/拈出/双采），棋盘分级高亮（可走/可落/可拈出）+ 操作提示条
+- **规则考据** — 以《谱双》一手原文为权威，规则文档 v0.3 逐条注明出处，含 14 种地域变体与南北局例术语
 
 ## 🎮 在线试玩
 
-部署到 GitHub Pages 后，直接访问：
+<p align="center">
+  <a href="https://mig144.github.io/shuanglu/">
+    <img src="https://img.shields.io/badge/▶️%20立即开始游玩-https%3A%2F%2Fmig144.github.io%2Fshuanglu%2F-brightgreen?style=for-the-badge" alt="Play">
+  </a>
+</p>
 
-```
-https://mig144.github.io/shuanglu/
-```
+**https://mig144.github.io/shuanglu/** — 打开即玩，无需注册、无需安装（首次进入会弹出教学，也可直接开始对局）。
 
-构建产物使用相对路径 base，任意子路径托管均可正常加载。
+## 🚀 快速开始
 
-## 常用命令
+### 方式一：在线游玩（零安装）
+直接访问上述在线地址，浏览器即可运行。
 
-```bash
-npm install        # 安装依赖
-npm run dev        # 本地开发（Vite dev server，热更新）
-npm run build      # 构建（tsc --noEmit && vite build）
-npm run preview    # 预览构建产物
-npm test           # 运行引擎单元测试 + UI 冒烟测试（Vitest）
-npm run typecheck  # 仅类型检查
-```
+### 方式二：本地一键启动（无需命令行 · 跨平台）
 
-## 一键启动（无需命令行 · 跨平台）
-
-项目根目录提供**各平台双击即用**的入口（可复制到桌面/Applications）。所有入口只做一件事：调用跨平台的 `scripts/launch.mjs`（构建→起服务→开浏览器）或 `scripts/stop.mjs`（结束服务）。
+项目根目录提供各平台**双击即用**的入口（可复制到桌面/Applications），内部调用 `scripts/launch.mjs`（构建 → 起服务 → 自动开浏览器）：
 
 | 平台 | 启动 | 停止 |
 |---|---|---|
-| Windows | `启动双陆棋.cmd` | `停止双陆棋.cmd` |
-| macOS | `启动双陆棋.command`（需先 `chmod +x`） | `停止双陆棋.command` |
-| Linux | `启动双陆棋.desktop`（改路径 + `chmod +x`） | `停止双陆棋.desktop` |
+| Windows | `启动双陆棋.cmd`（或右键→发送到→桌面快捷方式） | `停止双陆棋.cmd` |
+| macOS | `启动双陆棋.command`（首次需 `chmod +x`） | `停止双陆棋.command` |
+| Linux | `启动双陆棋.desktop`（修改 `Path`/`Exec` 为实际路径后 `chmod +x`） | `停止双陆棋.desktop` |
 
-Windows 补充：右键 `启动双陆棋.cmd` → 发送到 → 桌面快捷方式，即为桌面图标入口。
+> 首次双击会先构建（数秒），之后秒开；服务默认端口 4173（占用自动 +1）；停止脚本按 `server.pid` 精确结束本项目进程，不误杀其它 node。
 
-> 说明：
-> - 首次双击启动会先执行 `npm run build`（约几秒），之后秒开；改过源码后再启动会自动重新构建。
-> - 服务默认端口 4173（被占用时自动 +1，浏览器打开的是实际端口）；服务在后台运行，关闭浏览器可再次双击重复打开。
-> - 停止脚本只结束本项目记录的预览进程 PID（`server.pid`），不会误杀其它 node 进程。
-> - **路径注意**：`.cmd`/`.command` 用脚本所在目录定位，移动整个文件夹也无碍；`.desktop` 需手动把 `Path`/`Exec` 改为你的实际项目路径（见文件内注释）。
-> - 若把项目复制到 macOS/Linux，记得 `chmod +x 启动双陆棋.command`（或 `.desktop`）。
+### 方式三：源码开发
 
-## 更多启动形态（进阶）
-
-- **单文件可执行（无需 Node）**：用 Node SEA（`node --experimental-sea-config`）把 `scripts/launch.mjs` 编译成各平台单个二进制，双击即运行，本机免装 Node。
-- **原生桌面 App（终态）**：Tauri 把 `dist` 静态资源嵌入，出 Windows/macOS/Linux 原生安装包，离线、无端口、无后台进程。
-- **纯 Web 部署（连启动器都不需要）**：项目是纯静态站，构建后推到 GitHub Pages / Netlify / Cloudflare Pages，得到 URL 后手机/平板/任意设备浏览器即玩。
-
-## 项目结构
-
-```
-src/
-  game/            # 规则引擎（纯逻辑）
-    types.ts       # 类型定义（GameState / Move / GameOptions / 变体）
-    geometry.ts    # 坐标/几何工具（玩家坐标 <-> 全局物理格）
-    engine.ts      # 核心引擎：掷骰、legalMoves、isLegalMove、applyMove、skipRemaining、打马/入局/拈出/终局、序列化
-    ai.ts          # 走子 AI（random / greedy）
-    index.ts       # 公共导出
-  components/
-    Board.tsx      # 棋盘 UI（24 梁 + 门 + 梁頭/梁末 + 走法高亮）
-  App.tsx          # 对局协调：掷骰、回合、PVE/热座、悔棋、计筹、存局、复盘
-tests/
-  engine.test.ts   # 规则引擎单元测试（17 项）
-  ui-smoke.test.tsx # UI 渲染冒烟（SSR）测试（3 项）
-docs/
-  README.md                  # 文档索引（推荐从这里进入）
-  rules/shuanglu-rules-v0.3.md  # ★ 现行规则定稿（权威依据）
-  research/pushuang-ocr-fulltext.txt  # 《谱双》五卷全文 OCR 文本（供校对）
-  archive/                   # 历史版本（v0.1 草案 / v0.2 初定稿）
+```bash
+npm install        # 安装依赖
+npm run dev        # 开发模式（Vite 热更新）
+npm test           # 运行全部测试
+npm run build      # 生产构建
+npm run preview    # 预览构建产物
 ```
 
-## 功能清单
+## 🎯 玩法
 
-- **对决模式**：人机对战（PVE，可执白/执黑、AI 随机/启发式）· 本地双人热座（PVP）
-- **变体选择**：平双陆（默认）· 回回（任意出两马）· 三梁（三骰）· 佛（十二马）· 下赞（双采赏一掷）· 大食（三骰）
-- **对局功能**：自动掷骰 · 轮空自动跳过 · 悔棋（任意步）· 计筹多局（先胜 1/2/3/5 局）· 存档（localStorage + 导出/读入 JSON）· 复盘（快照回放）
-- **新手教学**：静态图解手册 + 互动式实战教学（5 课：走子/打马/入局/拈出/双采）
-- **规则提示**：入局/拈出/双采/赏一掷状态标注；可走马/可落点/可拈出分级高亮；操作提示条
+**目标**：双方各执 15 枚「马」，掷骰行棋，先把全部马移出棋盘者胜。
 
-## 规则要点（详见 docs/rules/shuanglu-rules-v0.3.md）
+| 阶段 | 规则 |
+|---|---|
+| **走子** | 棋盘 24 梁、中央以「门」分隔；白马自右归左、黑马自左归右。按骰数推进，可分走两马或同一马分两步走；双采按该点数走 4 步 |
+| **打马 / 卡位** | 单立敌马可被击落（打马）；己方两马成「梁」则敌方不能落子、不能打，但可越过；单梁上限 6 马 |
+| **入局** | 被打落的马必须先按点数入局，界外有马时盘上其它马不得行动 |
+| **过门 / 拈出** | 全部马进入己方内区后按点数「拈出」离盘 |
+| **胜负计筹** | 先拈尽者胜，记 1 筹；对方未过门或未拈出任何马则赢 2 筹（双筹） |
 
-- 棋盘 24 梁、两门；白马自右归左、黑马自左归右。
-- 每方 15 马（佛双陆 12 马）；单梁上限 6 马。
-- 打马：单立马可击落；两马成梁则不可打不可落。
-- 入局：被击落马须先全部复进（按采数落子），否则盘上马不得走。
-- 过门后拈出离盘；拈尽者胜；敌未归梁或未拈出则"双筹"。
-- 变体差异（详见 v0.3 文档）：三梁/大食用三骰；回回出局任意两马；佛双陆不布局、十二马；下赞双采赏一掷。
+完整规则与全部变体见 [规则定稿 v0.3](docs/rules/shuanglu-rules-v0.3.md)；游戏内置**互动教学**可边玩边学。
 
-## 引擎配置项（`GameOptions`）
+## 📚 文档
+
+| 文档 | 说明 |
+|---|---|
+| [📖 文档索引](docs/README.md) | 推荐入口：目录结构、规则版本脉络 |
+| [📗 规则定稿 v0.3](docs/rules/shuanglu-rules-v0.3.md) | ★ 现行权威规则——五卷结构、常局格制、14 种变体、南北局例、引擎配置 |
+| [📜 《谱双》OCR 全文](docs/research/pushuang-ocr-fulltext.txt) | 《欣赏编》本《谱双》五卷全文（含置信度，供校对） |
+
+**规则版本**：v0.1（需求草案）→ v0.2（识典古籍本初定稿）→ **v0.3（现行，按《欣赏编》本全书核对）**。历史版本存于 `docs/archive/`。
+
+> 规则考据说明：OCR 语音文本转录自**公版古籍《谱双》**（宋·洪遵），为研究性整理；《欣赏编》扫描原件（约 27MB PDF）不随仓库分发。
+
+## 🧩 技术栈与架构
+
+**React 18 + TypeScript + Vite 5**，规则引擎与 UI 完全解耦：
+
+```
+src/game/  纯逻辑引擎（无 React 依赖）
+  engine.ts    掷骰 / legalMoves / isLegalMove / applyMove / skipRemaining / 序列化
+  types.ts     GameState / Move / GameOptions（含 14 种变体）
+  geometry.ts  玩家坐标 ↔ 全局物理格
+  ai.ts        走子 AI（随机 / 启发式）
+  tutorial.ts  互动教学课件（5 课）
+```
+
+引擎设计要点：状态为**纯数据、可序列化**（`serializeState`/`loadState`），配置在 `createInitialState` 时固化进 `state.options`，`legalMoves`/`chooseMove` 自动读取——对局全程配置一致、可存档/同步/联机复用。
+
+### 引擎配置项（`GameOptions`）
 
 | 项 | 说明 | 默认 |
 |---|---|---|
 | `maxStack` | 单梁马数上限（"一道不得过六马"） | 6 |
-| `doublesFourMoves` | 双采走四步（"併移四馬"） | true |
-| `doublesBonusRoll` | 双采赏一掷（下赞/大食） | false |
-| `entryCanHit` | 入局可打单立马 | true |
-| `bearOffTolerance` | `standard` 按采数 / `arbitraryTwo` 任意出（回回） | standard |
-| `diceCount` | 骰子数 2 / 3（三梁/大食） | 2 |
-| `pieceCount` | 马数 15 / 12（佛） | 15 |
-| `variant` | 玩法变体标识（预留 14 种） | ping |
+| `doublesFourMoves` | 双采走四步（"併移四馬"） | `true` |
+| `doublesBonusRoll` | 双采赏一掷（下赞/大食） | `false` |
+| `entryCanHit` | 入局可打单立马 | `true` |
+| `bearOffTolerance` | `standard` 按采数 / `arbitraryTwo` 任意出（回回） | `standard` |
+| `diceCount` | 骰子数 2 / 3（三梁/大食） | `2` |
+| `pieceCount` | 马数 15 / 12（佛） | `15` |
+| `variant` | 玩法变体标识（预留 14 种） | `ping` |
 
-配置在 `createInitialState(player, options)` 时固化进 `state.options`；`legalMoves`/`chooseMove` 默认自动读取，保证整局一致、可序列化同步。
-
-## 《谱双》各卷（《欣赏编》本，PDF 页 399–449）
-
-| 卷 | 内容 |
-|---|---|
-| 卷一 | 盘马制度（图）：北双陆盘 / 广州双陆板 / 大食双陆毯 / 真腊阁婆双陆板 |
-| 卷二 | 北双陆（开局图）、平双陆、打间、回回、七梁、三梁 |
-| 卷三 | 广州：罗嬴、下赞（双采走四+赏一掷）、不打（无骰喊彩）、佛（十二马）、三堆 |
-| 卷四 | 南番东夷：四架八、南皮、大食（三骰）、日本（归一为胜） |
-| 卷五 | 总录：常局格制、南北局例、事始、盘马（两门二十四路）、骰子、赌赛、名称、杂记 |
-
-## 🚀 发布与日常更新
-
-本仓库已发布：
-
-- **仓库**：https://github.com/MiG144/shuanglu
-- **在线地址**：https://mig144.github.io/shuanglu/
-- **部署方式**：GitHub Pages（Source = GitHub Actions），`.github/workflows/deploy.yml` 负责构建+测试+部署，每次 push 自动生效。
-
-日常更新只需：
+## ✅ 测试
 
 ```bash
-git add -A
-git commit -m "描述改动"
-git push        # 自动触发 Actions 构建部署，约 1-2 分钟后线上更新
+npm test
 ```
 
-> 说明：`docs/欣赏编….pdf`（约 27MB 古籍扫描件）未入库（见 `.gitignore`），因此仓库体积很小；规则结论与 OCR 文本均在 `docs/`。
+- 规则引擎单元测试（摆位/打马/卡位/入局/拈出/终局/变体/序列化）
+- 互动教学课件**可解性回放测试**（每课逐步用引擎校验）
+- UI 渲染冒烟测试（SSR）
+- 当前 **22 项全部通过**，并纳入 CI（每次 push 自动执行）
+
+## 🔧 开发与发布
+
+- **日常更新**：`git push` 即触发 GitHub Actions（22 项测试 + 构建 + Pages 部署），约 1-2 分钟线上更新。
+- **本地启动服务**：`npm run dev`（开发）或双击各平台启动脚本（生产预览）。
+
+## 🤝 贡献
+
+欢迎 Issue 与 PR。建议先读 [规则定稿 v0.3](docs/rules/shuanglu-rules-v0.3.md) 与 [引擎结构](#-技术栈与架构)，任何规则/玩法争议以《谱双》原文为准。
+
+- 报告问题 / 建议：提交 [Issue](https://github.com/MiG144/shuanglu/issues)
+- 修改代码：Fork → 提交 PR（CI 会运行测试并自动部署预览）
 
 ## 📄 许可
 
-**MIT License**（见 `LICENSE`）。允许任何人自由使用、修改、分发、商用，仅需保留版权声明。
+**MIT License**（见 [`LICENSE`](LICENSE)），允许任何人自由使用、修改、分发、商用，仅需保留版权声明。
 
-古籍说明：`docs/research/pushuang-ocr-fulltext.txt` 的 OCR 文本转录自**公版古籍《谱双》（宋·洪遵）**，规则整理为研究性笔记；`docs/欣赏编….pdf`（扫描原件）不随仓库分发。
+**致谢**：规则还原基于公版古籍——宋·洪遵《谱双》，以及《欣赏编》十四卷（明·沈津编）扫描本与识典古籍电子本（翁同龢清抄本）的互校。
