@@ -1,8 +1,10 @@
+/* 全局面板：浅暖米色 + 朱砂主色（扁平，弱光影） */
 .app-header h1 {
   margin: 0 0 4px;
   font-size: 26px;
   font-family: var(--font-serif);
   letter-spacing: 0.06em;
+  color: #2c2a25;
 }
 
 .app-header-row {
@@ -18,18 +20,19 @@
 }
 
 .home-btn {
-  border: 1px solid #c9bfa4;
-  background: #fff;
+  border: 1px solid #e2d8bf;
+  background: #fffdf8;
   border-radius: 8px;
   padding: 6px 12px;
   cursor: pointer;
   font-size: 13px;
   white-space: nowrap;
+  color: #5c5342;
 }
 
 .app-header p {
   margin: 0 0 16px;
-  color: #6a6250;
+  color: #7a6f5c;
 }
 
 .controls {
@@ -52,7 +55,7 @@
 .settings-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 18, 12, 0.55);
+  background: rgba(52, 45, 30, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,13 +64,14 @@
 }
 
 .settings-panel {
-  background: #fbf7ec;
-  color: #1f2430;
+  background: #fffdf8;
+  color: #2c2a25;
   border-radius: 14px;
   max-width: 420px;
   width: 100%;
   padding: 18px 20px;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid #e2d8bf;
+  box-shadow: 0 10px 30px rgba(90, 70, 40, 0.18);
 }
 
 .settings-head {
@@ -88,7 +92,7 @@
   background: transparent;
   font-size: 17px;
   cursor: pointer;
-  color: #6a6250;
+  color: #7a6f5c;
 }
 
 .settings-grid {
@@ -105,12 +109,12 @@
 
 .settings-field label {
   font-size: 13px;
-  color: #6a6250;
+  color: #7a6f5c;
 }
 
 .settings-field select {
   padding: 9px 10px;
-  border: 1px solid #c9bfa4;
+  border: 1px solid #dcd2b8;
   border-radius: 8px;
   font-size: 14px;
   background: #fff;
@@ -122,10 +126,14 @@
   padding: 10px;
   border: none;
   border-radius: 10px;
-  background: #26241f;
-  color: #f4f0e6;
+  background: #b03a2e;
+  color: #fff8ee;
   font-size: 15px;
   cursor: pointer;
+}
+
+.settings-done:hover {
+  background: #c0392b;
 }
 
 @media (max-width: 640px) {
@@ -146,37 +154,44 @@
 
 .controls select {
   padding: 6px 10px;
-  border: 1px solid #c9bfa4;
+  border: 1px solid #dcd2b8;
   background: #fff;
   border-radius: 8px;
   cursor: pointer;
   max-width: 240px;
+  color: #2c2a25;
 }
 
 .controls button {
   padding: 6px 14px;
-  border: 1px solid #c9bfa4;
-  background: #fff;
+  border: 1px solid #e2d8bf;
+  background: #fffdf8;
   border-radius: 8px;
   cursor: pointer;
+  color: #5c5342;
+}
+
+.controls button:hover {
+  background: #f7efdc;
 }
 
 .controls button.active {
-  background: #2b2b33;
-  color: #f4f0e6;
-  border-color: #2b2b33;
+  background: #b03a2e;
+  color: #fff8ee;
+  border-color: #b03a2e;
 }
 
 .status-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  border: 1px solid #e2d9c2;
+  background: #fffdf8;
+  border: 1px solid #e2d8bf;
   border-radius: 10px;
   padding: 10px 14px;
   margin-bottom: 16px;
   font-weight: 600;
+  color: #3a362c;
 }
 
 .dice em {
@@ -186,18 +201,19 @@
 }
 
 .hint-bar {
-  background: #2b2b33;
-  color: #ffe9a8;
+  background: #fff6e0;
+  color: #8a5a1a;
+  border: 1px solid #ecd38f;
   border-radius: 10px;
   padding: 8px 14px;
   margin-bottom: 12px;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .move-bar {
-  background: #14366e;
-  color: #cfe0ff;
+  background: #fbf1d9;
+  color: #5c4a2a;
+  border: 1px solid #e6d2a0;
   border-radius: 10px;
   padding: 6px 14px;
   margin-bottom: 10px;
@@ -210,7 +226,7 @@
 }
 
 .move-quote {
-  color: #ffd9a0;
+  color: #b03a2e;
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -218,12 +234,12 @@
 
 /* 互动教学面板 */
 .tut-panel {
-  background: #14366e;
-  color: #f4f0e6;
+  background: #eef4ff;
+  color: #24376b;
   border-radius: 12px;
   padding: 12px 16px;
   margin-bottom: 12px;
-  border: 2px solid #5b8dee;
+  border: 1px solid #c4d5f5;
 }
 
 .tut-panel-head {
@@ -236,13 +252,13 @@
 .tut-title {
   font-weight: 700;
   font-size: 16px;
-  color: #a9c8ff;
+  color: #1d5fd0;
 }
 
 .tut-exit {
-  border: 1px solid #8fb3f5;
+  border: 1px solid #a9c3f0;
   background: transparent;
-  color: #cfe0ff;
+  color: #1d5fd0;
   border-radius: 6px;
   padding: 3px 10px;
   cursor: pointer;
@@ -255,7 +271,7 @@
 }
 
 .tut-next {
-  background: #2f8b3a;
+  background: #1d5fd0;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -269,18 +285,19 @@
   display: flex;
   justify-content: space-between;
   margin-top: 12px;
-  color: #6a6250;
+  color: #7a6f5c;
   font-size: 14px;
 }
 
 .off-info .score {
   font-weight: 700;
-  color: #1f2430;
+  color: #2c2a25;
 }
 
 .replay-bar {
-  background: #2b2b33;
-  color: #f4f0e6;
+  background: #fbf1d9;
+  color: #5c4a2a;
+  border: 1px solid #e6d2a0;
   border-radius: 10px;
   padding: 8px 14px;
   margin-bottom: 12px;
@@ -291,15 +308,15 @@
 
 .replay-bar button {
   padding: 4px 12px;
-  border: 1px solid #555;
-  background: #444;
-  color: #f4f0e6;
+  border: 1px solid #d8c492;
+  background: #fff;
+  color: #5c4a2a;
   border-radius: 6px;
   cursor: pointer;
 }
 
 .file-load {
-  color: #6a6250;
+  color: #7a6f5c;
   font-size: 13px;
   cursor: pointer;
   text-decoration: underline;

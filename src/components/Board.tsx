@@ -65,17 +65,17 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
     ].filter(Boolean).join(' ')
     const tutLabel = g === tutFrom ? '（点击这里）' : g === tutTo ? '（目标位置）' : ''
     // 酒瓶/捣衣椎形棋子（《谱双》"上径小、下径大、底平、束腰"）：
-    // 窄颈 → 鼓腹 → 平底
+    // 宽平底 → 直鼓身 → 收颈 → 顶部圆钮
     const Bottle = ({ color }: { color: 'white' | 'black' }) => (
       <span className={`piece bottle ${color}`} aria-hidden="true">
-        <svg viewBox="0 0 20 28" width="20" height="28" className="bottle-shape">
-          {/* 瓶身：上颈窄 (8→9) 鼓腹 (15) 平底收窄 */}
+        <svg viewBox="0 0 24 34" width="24" height="34" className="bottle-shape">
+          {/* 瓶身与颈：平底 → 直身 → 收颈 */}
           <path
-            d="M8.2 2 C8 8 5.6 11 4.6 15 C3.6 19.4 5 24 7.6 26.6 L12.4 26.6 C15 24 16.4 19.4 15.4 15 C14.4 11 12 8 11.8 2 Z"
+            d="M4 31 L20 31 L20 24 C20 17 15 16 15 11.5 L15 9 C15 8 14.3 7.4 13.4 7.4 L10.6 7.4 C9.7 7.4 9 8 9 9 L9 11.5 C9 16 4 17 4 24 Z"
             className={`bottle-body ${color}`}
           />
-          {/* 瓶口圆环 */}
-          <ellipse cx="10" cy="2" rx="2.6" ry="1.1" className={`bottle-rim ${color}`} />
+          {/* 顶部圆钮 */}
+          <ellipse cx="12" cy="5.6" rx="3" ry="2.4" className={`bottle-knob ${color}`} />
         </svg>
       </span>
     )
@@ -125,21 +125,19 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
 
   return (
     <div className="board">
-      <div className="gate-row">
-        <span className="gate-mark font-serif">梁頭（起点）</span>
-        <span className="gate-mark font-serif">— 门 —</span>
-        <span className="gate-mark font-serif">梁末（终点）</span>
-      </div>
       <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 4 }}>
         {top.map(renderPoint)}
       </div>
+      {/* 门槽：中央月牙门（《谱双》"月牙门"），两侧标示起点/终点 */}
+      <div className="gate-row">
+        <span className="gate-label font-serif">梁頭</span>
+        <svg className="gate-crescent" viewBox="0 0 120 46" width="120" height="46" aria-hidden="true">
+          <path d="M8 42 C24 10 96 10 112 42 C94 20 26 20 8 42 Z" />
+        </svg>
+        <span className="gate-label font-serif">梁末</span>
+      </div>
       <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 4 }}>
         {bottom.map(renderPoint)}
-      </div>
-      <div className="gate-row">
-        <span className="gate-mark font-serif">梁頭（起点）</span>
-        <span className="gate-mark font-serif">— 门 —</span>
-        <span className="gate-mark font-serif">梁末（终点）</span>
       </div>
     </div>
   )

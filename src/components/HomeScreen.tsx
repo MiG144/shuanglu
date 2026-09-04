@@ -1,6 +1,8 @@
 import './HomeScreen.css'
 import type { GameOptions, Player } from '../game'
 
+const REPO_URL = 'https://github.com/MiG144/shuanglu'
+
 interface HomeScreenProps {
   variant: GameOptions['variant']
   aiLevel: 'random' | 'greedy' | 'advanced'
@@ -56,14 +58,7 @@ export function HomeScreen(props: HomeScreenProps) {
             <text x="32" y="52" textAnchor="middle" fontSize="20" fill="#f8f2e3">陸</text>
           </svg>
         </h1>
-        <p className="home-sub font-serif">打雙陸 · 依據宋《譜雙》規則（v0.3）</p>
-        <p className="home-quote font-serif">雙陸近古號雅戲</p>
-        <p className="home-desc">
-          中式双陆：24 梁双门，白马右归左、黑马左归右——掷骰行马，打马卡位，先拈尽者胜。
-        </p>
-        <p className="home-meta font-serif">
-          規則定稿 v0.3 · 依據宋·洪遵《譜雙》 · React · TypeScript · MIT License
-        </p>
+        <p className="home-sub font-serif">「雙陸近古號雅戲」 · 打雙陸 · 依據宋《譜雙》v0.3</p>
       </div>
 
       <div className="home-actions">
@@ -128,31 +123,23 @@ export function HomeScreen(props: HomeScreenProps) {
         </div>
 
         <div className="home-stats">
-          <div className="home-stats-title">📊 战绩统计</div>
-          <div className="home-stats-grid">
-            <span>总局数：<b>{stats.total}</b></span>
-            <span>白马胜：<b>{stats.whiteWins}</b></span>
-            <span>黑马胜：<b>{stats.blackWins}</b></span>
-            <span>
-              连胜：
-              <b>
-                {stats.streak}{stats.streakPlayer ? `（${stats.streakPlayer === 'white' ? '白马' : '黑马'}）` : ''}
-              </b>
-            </span>
-          </div>
-          <button className="home-stats-reset" onClick={onResetStats}>清除战绩</button>
+          <span>
+            战绩：<b>{stats.total}</b> 局 · 白马 <b>{stats.whiteWins}</b> / 黑马 <b>{stats.blackWins}</b>
+            {stats.streak > 0 && <> · 连胜 {stats.streak}{stats.streakPlayer ? `（${stats.streakPlayer === 'white' ? '白' : '黑'}）` : ''}</>}
+          </span>
+          <button className="home-stats-reset" onClick={onResetStats}>清除</button>
         </div>
       </div>
 
       <p className="home-foot">
-      规则考据：宋·洪遵《谱双》· 《欣赏编》本 · 公有领域古籍
-      <button className="home-sound" onClick={onToggleSound} title={soundOn ? '关闭音效' : '开启音效'}>
-        {soundOn ? '🔊' : '🔇'} {soundOn ? '音效开' : '音效关'}
-      </button>
-      {isSea && (
-        <button className="home-sound" onClick={onStopSea} title="退出本地离线服务">⏻ 退出本地服务</button>
-      )}
-    </p>
+        <a className="home-repo" href={REPO_URL} target="_blank" rel="noreferrer">项目地址：{REPO_URL.replace('https://', '')}</a>
+        <button className="home-sound" onClick={onToggleSound} title={soundOn ? '关闭音效' : '开启音效'}>
+          {soundOn ? '🔊' : '🔇'} {soundOn ? '音效开' : '音效关'}
+        </button>
+        {isSea && (
+          <button className="home-sound" onClick={onStopSea} title="退出本地离线服务">⏻ 退出本地服务</button>
+        )}
+      </p>
     </div>
   )
 }

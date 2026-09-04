@@ -17,15 +17,16 @@ describe('UI 渲染冒烟（SSR，renderToString）', () => {
     expect(html).toContain('平双陆')
   })
 
-  it('Board 可渲染 24 梁且含门标', () => {
+  it('Board 可渲染 24 梁且含起点/终点与月牙门', () => {
     const state = createInitialState('white')
     const html = renderToString(
       React.createElement(Board, { state, legal: [] }),
     )
-    // 24 个点 + 梁頭/梁末/门 标注
+    // 24 个点 + 梁頭/梁末 + 月牙门
     expect((html.match(/class="point/g) ?? []).length).toBe(24)
     expect(html).toContain('梁頭')
-    expect(html).toContain('门')
+    expect(html).toContain('梁末')
+    expect(html).toContain('gate-crescent')
   })
 
   it('Tutorial 教学组件可渲染且含关键规则', () => {
