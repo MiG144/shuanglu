@@ -1,3 +1,24 @@
+/* ============ 思源字体（自托管子集 · OFL） ============ */
+@font-face {
+  font-family: 'Shuanglu Serif';
+  src: url('./fonts/shuanglu-serif-sc.woff2') format('woff2');
+  font-display: swap;
+  font-weight: 400 900;
+}
+
+@font-face {
+  font-family: 'Shuanglu Sans';
+  src: url('./fonts/shuanglu-sans-sc.woff2') format('woff2');
+  font-display: swap;
+  font-weight: 300 900;
+}
+
+/* 全局：思源黑体（现代可读）；标题/古引用使用思源宋体工具类 */
+:root {
+  --font-serif: 'Shuanglu Serif', 'Noto Serif SC', 'Songti SC', 'STZhongsong', 'SimSun', serif;
+  --font-sans: 'Shuanglu Sans', 'Noto Sans SC', system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,7 +26,7 @@
 :root {
   color: #1f2430;
   background: #f4f0e6;
-  font-family: system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.5;
 }
 
@@ -17,4 +38,9 @@ body {
   max-width: 960px;
   margin: 0 auto;
   padding: 16px;
+}
+
+/* 工具类：古籍观感 */
+.font-serif {
+  font-family: var(--font-serif);
 }

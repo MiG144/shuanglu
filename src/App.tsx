@@ -20,6 +20,7 @@ import { TUT_LESSONS, createLessonState, getLesson } from './game/tutorial'
 import { sfx } from './game/sfx'
 import { loadStats, recordResult, resetStats } from './game/stats'
 import type { MatchStats } from './game/stats'
+import { quoteForMove } from './game/quotes'
 
 const TUTORIAL_KEY = 'shuanglu.tutorialSeen'
 
@@ -689,13 +690,20 @@ export default function App() {
 
       {lastMove && !replayMode && (
         <div className="move-bar">
-          {lastMove.move.player === 'white' ? '白马' : '黑马'}
-          {' '}
-          {lastMove.move.from === null
-            ? `入局 → 第 ${lastMove.move.to} 梁`
-            : lastMove.move.to === null
-              ? `第 ${lastMove.move.from} 梁 拈出离盘`
-              : `${lastMove.move.from} → ${lastMove.move.to}${lastMove.move.hit ? '（打马）' : ''}`}
+          <span>
+            {lastMove.move.player === 'white' ? '白马' : '黑马'}
+            {' '}
+            {lastMove.move.from === null
+              ? `入局 → 第 ${lastMove.move.to} 梁`
+              : lastMove.move.to === null
+                ? `第 ${lastMove.move.from} 梁 拈出离盘`
+                : `${lastMove.move.from} → ${lastMove.move.to}${lastMove.move.hit ? '（打马）' : ''}`}
+          </span>
+          {quoteForMove(lastMove.move.hit, lastMove.move.bearsOff, lastMove.move.reenters) && (
+            <span className="move-quote font-serif">
+              「{quoteForMove(lastMove.move.hit, lastMove.move.bearsOff, lastMove.move.reenters)}」
+            </span>
+          )}
         </div>
       )}
 

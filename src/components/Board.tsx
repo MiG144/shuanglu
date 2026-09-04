@@ -108,9 +108,9 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
   return (
     <div className="board">
       <div className="gate-row">
-        <span className="gate-mark">梁頭（起点）</span>
-        <span className="gate-mark">— 门 —</span>
-        <span className="gate-mark">梁末（终点）</span>
+        <span className="gate-mark font-serif">梁頭（起点）</span>
+        <span className="gate-mark font-serif">— 门 —</span>
+        <span className="gate-mark font-serif">梁末（终点）</span>
       </div>
       <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 4 }}>
         {top.map(renderPoint)}
@@ -119,9 +119,9 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
         {bottom.map(renderPoint)}
       </div>
       <div className="gate-row">
-        <span className="gate-mark">梁頭（起点）</span>
-        <span className="gate-mark">— 门 —</span>
-        <span className="gate-mark">梁末（终点）</span>
+        <span className="gate-mark font-serif">梁頭（起点）</span>
+        <span className="gate-mark font-serif">— 门 —</span>
+        <span className="gate-mark font-serif">梁末（终点）</span>
       </div>
     </div>
   )

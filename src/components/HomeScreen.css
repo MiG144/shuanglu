@@ -14,12 +14,30 @@
 .home-title {
   font-size: 42px;
   margin: 12px 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.home-seal {
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
 }
 
 .home-sub {
   color: #7a4f2a;
   font-weight: 700;
-  margin: 0 0 10px;
+  margin: 0 0 6px;
+}
+
+.home-quote {
+  color: #8a6a44;
+  font-size: 17px;
+  letter-spacing: 0.35em;
+  margin: 2px 0 10px;
+  font-weight: 600;
 }
 
 .home-desc {

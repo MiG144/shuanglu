@@ -1,6 +1,8 @@
 .app-header h1 {
   margin: 0 0 4px;
   font-size: 26px;
+  font-family: var(--font-serif);
+  letter-spacing: 0.06em;
 }
 
 .app-header-row {
@@ -107,6 +109,17 @@
   margin-bottom: 10px;
   font-size: 14px;
   font-weight: 600;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: baseline;
+}
+
+.move-quote {
+  color: #ffd9a0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
 }
 
 /* 互动教学面板 */

@@ -34,6 +34,8 @@
 .rules-header h2 {
   margin: 0;
   font-size: 20px;
+  font-family: var(--font-serif);
+  letter-spacing: 0.05em;
 }
 
 .rules-close {
@@ -98,6 +100,7 @@
   margin: 10px 0 4px;
   font-size: 13px;
   color: #5c5342;
+  font-family: var(--font-serif);
 }
 
 .rule-board {
