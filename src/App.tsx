@@ -50,6 +50,7 @@ const STORAGE_KEY = 'shuanglu.current'
 export default function App() {
   const [state, setState] = useState<GameState>(() => createInitialState('white'))
   const [history, setHistory] = useState<string[]>([]) // 快照栈（悔棋）
+  const [mode, setMode] = useState<'pve' | 'hotseat'>('pve')
   const [playerColor, setPlayerColor] = useState<Player>('white')
   const [variant, setVariant] = useState<GameOptions['variant']>('ping')
   const [aiLevel, setAiLevel] = useState<'random' | 'greedy'>('greedy')
@@ -60,7 +61,8 @@ export default function App() {
   const [replayStep, setReplayStep] = useState(0)
   const busyRef = useRef(false)
 
-  const humanTurn = state.turn === playerColor && state.phase !== 'ended'
+  // 热座：双方都是人类（本机轮流，隐藏 AI）；PVE：只有执子方是人类
+  const humanTurn = !replayMode && (mode === 'hotseat' ? state.phase !== 'ended' : state.turn === playerColor && state.phase !== 'ended')
   const legal = useMemo(() => legalMoves(state), [state])
 
   // 自动存档（防刷新丢失）
@@ -110,8 +112,8 @@ export default function App() {
       }
     }
 
-    // AI 回合
-    if (!humanTurn) {
+    // AI 回合（仅 PVE：AI 执非玩家方；热座双方皆人类，无 AI）
+    if (!humanTurn && mode === 'pve') {
       busyRef.current = true
       const step = chooseMove(state, undefined, aiLevel)
       if (!step) {
@@ -132,7 +134,7 @@ export default function App() {
         busyRef.current = false
       }
     }
-  }, [state, humanTurn, legal, aiLevel, replayMode])
+  }, [state, humanTurn, legal, aiLevel, replayMode, mode])
 
   // ---------- 终局计筹 ----------
   useEffect(() => {
@@ -258,15 +260,25 @@ export default function App() {
       </header>
 
       <div className="controls">
-        <div className="color-picker">
-          <label>执子：</label>
-          <button className={playerColor === 'white' ? 'active' : ''} onClick={() => { setPlayerColor('white'); startNewGame() }}>
-            白马
-          </button>
-          <button className={playerColor === 'black' ? 'active' : ''} onClick={() => { setPlayerColor('black'); startNewGame() }}>
-            黑马
-          </button>
+        <div className="mode-picker">
+          <label>模式：</label>
+          <select value={mode} onChange={(e) => setMode(e.target.value as 'pve' | 'hotseat')}>
+            <option value="pve">人机对战（PVE）</option>
+            <option value="hotseat">本地双人（热座）</option>
+          </select>
         </div>
+
+        {mode === 'pve' && (
+          <div className="color-picker">
+            <label>执子：</label>
+            <button className={playerColor === 'white' ? 'active' : ''} onClick={() => { setPlayerColor('white'); startNewGame() }}>
+              白马
+            </button>
+            <button className={playerColor === 'black' ? 'active' : ''} onClick={() => { setPlayerColor('black'); startNewGame() }}>
+              黑马
+            </button>
+          </div>
+        )}
 
         <div className="variant-picker">
           <label>变体：</label>
@@ -277,13 +289,15 @@ export default function App() {
           </select>
         </div>
 
-        <div className="ai-picker">
-          <label>AI：</label>
-          <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value as 'random' | 'greedy')}>
-            <option value="greedy">启发式</option>
-            <option value="random">随机</option>
-          </select>
-        </div>
+        {mode === 'pve' && (
+          <div className="ai-picker">
+            <label>AI：</label>
+            <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value as 'random' | 'greedy')}>
+              <option value="greedy">启发式</option>
+              <option value="random">随机</option>
+            </select>
+          </div>
+        )}
 
         <div className="wins-picker">
           <label>先胜几局：</label>
