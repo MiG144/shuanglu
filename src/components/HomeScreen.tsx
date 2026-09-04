@@ -3,12 +3,12 @@ import type { GameOptions, Player } from '../game'
 
 interface HomeScreenProps {
   variant: GameOptions['variant']
-  aiLevel: 'random' | 'greedy'
+  aiLevel: 'random' | 'greedy' | 'advanced'
   mode: 'pve' | 'hotseat'
   playerColor: Player
   winsToWin: number
   onVariant: (v: GameOptions['variant']) => void
-  onAiLevel: (l: 'random' | 'greedy') => void
+  onAiLevel: (l: 'random' | 'greedy' | 'advanced') => void
   onMode: (m: 'pve' | 'hotseat') => void
   onPlayerColor: (p: Player) => void
   onWinsToWin: (n: number) => void
@@ -90,7 +90,8 @@ export function HomeScreen(props: HomeScreenProps) {
         {mode === 'pve' && (
           <div className="home-field">
             <label>AI</label>
-            <select value={aiLevel} onChange={(e) => onAiLevel(e.target.value as 'random' | 'greedy')}>
+            <select value={aiLevel} onChange={(e) => onAiLevel(e.target.value as 'random' | 'greedy' | 'advanced')}>
+              <option value="advanced">进阶（前瞻）</option>
               <option value="greedy">启发式</option>
               <option value="random">随机</option>
             </select>

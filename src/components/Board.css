@@ -80,6 +80,27 @@
   z-index: 3;
 }
 
+/* 最近一步走子可视化 */
+.point.last-move {
+  border-color: #6aa7ff;
+  background: rgba(106, 167, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(106, 167, 255, 0.5);
+}
+
+.lm-badge {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1d5fd0;
+  color: #fff;
+  font-size: 10px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  z-index: 3;
+}
+
 @keyframes pulse-movable {
   0%, 100% { box-shadow: 0 0 0 0 rgba(255, 169, 77, 0.75); }
   50% { box-shadow: 0 0 0 6px rgba(255, 169, 77, 0); }

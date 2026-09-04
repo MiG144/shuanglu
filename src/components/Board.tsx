@@ -11,6 +11,8 @@ interface BoardProps {
   /** 互动教学：强引导点（期望点击的源/目标），高亮并添加点击指示光标 */
   tutFrom?: number
   tutTo?: number
+  /** 最近一步走子（可视化：源/目标短暂高亮） */
+  lastMove?: Move | null
 }
 
 /**
@@ -24,7 +26,7 @@ interface BoardProps {
  *   - selected（已选中起点）：白色粗框
  *   - 支持点击（点源→点目标）与 HTML5 拖拽（拖源→放目标）两种方式
  */
-export function Board({ state, legal, selected, onPointClick, onDragFrom, onDropTo, tutFrom, tutTo }: BoardProps) {
+export function Board({ state, legal, selected, onPointClick, onDragFrom, onDropTo, tutFrom, tutTo, lastMove }: BoardProps) {
   // 近端（下排）用白方视角编号 1..12，远端（上排）13..24（示意）
   const bottom = Array.from({ length: 12 }, (_, i) => i + 1) // 1..12
   const top = Array.from({ length: 12 }, (_, i) => 24 - i)   // 24..13
@@ -39,11 +41,16 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
   const isMoveTarget = (g: number) =>
     selected !== null && legal.some((m) => m.from === selected && m.to === g)
 
+  // 最近一步走子的高亮格
+  const lmFrom = lastMove ? lastMove.from : null
+  const lmTo = lastMove ? lastMove.to : null
+
   const renderPoint = (g: number) => {
     const white = state.points[g - 1].white
     const black = state.points[g - 1].black
     const isMovable = movableSet.has(g)
     const isTarget = isMoveTarget(g) || isEntryTarget(g)
+    const isLm = g === lmFrom || g === lmTo
     const cls = [
       'point',
       selected === g ? 'selected' : '',
@@ -51,6 +58,7 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
       isTarget ? 'target' : '',
       isBearOffSource(g) ? 'bearoff' : '',
       g === tutFrom || g === tutTo ? 'tut-guide' : '',
+      isLm ? 'last-move' : '',
     ].filter(Boolean).join(' ')
     const tutLabel = g === tutFrom ? '（点击这里）' : g === tutTo ? '（目标位置）' : ''
     return (
@@ -81,6 +89,9 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
         title={`梁 ${g}（白${white} / 黑${black}）${tutLabel}`}
       >
         {tutLabel && <span className="tut-badge">👆 {tutLabel}</span>}
+        {isLm && (
+          <span className="lm-badge">{g === lmTo ? '→ 落点' : '← 起点'}</span>
+        )}
         <span className="count">{white + black}</span>
         <div className="stack">
           {Array.from({ length: white }).map((_, i) => (

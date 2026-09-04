@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { Board } from './components/Board'
+import { Dice } from './components/Dice'
 import { HomeScreen } from './components/HomeScreen'
 import { RulesManual } from './components/RulesManual'
 import { Tutorial } from './components/Tutorial'
-import type { Die, GameOptions, GameState, Player } from './game'
+import type { Die, GameOptions, GameState, Move, Player } from './game'
 import {
   createInitialState,
   rollDice,
@@ -60,7 +61,7 @@ export default function App() {
   const [mode, setMode] = useState<'pve' | 'hotseat'>('pve')
   const [playerColor, setPlayerColor] = useState<Player>('white')
   const [variant, setVariant] = useState<GameOptions['variant']>('ping')
-  const [aiLevel, setAiLevel] = useState<'random' | 'greedy'>('greedy')
+  const [aiLevel, setAiLevel] = useState<'random' | 'greedy' | 'advanced'>('advanced')
   const [selected, setSelected] = useState<number | null>(null)
   const [matchScore, setMatchScore] = useState<Record<Player, number>>({ white: 0, black: 0 })
   const [winsToWin, setWinsToWin] = useState(1)
@@ -77,6 +78,7 @@ export default function App() {
     }
   })
   const [showRules, setShowRules] = useState(false)
+  const [rollKey, setRollKey] = useState(0)
   const busyRef = useRef(false)
 
   // 热座：双方都是人类（本机轮流，隐藏 AI）；PVE：只有执子方是人类
@@ -104,7 +106,9 @@ export default function App() {
         setState((s) => {
           // 掷骰前将当前态入快照栈
           setHistory((h) => [...h, serializeState(s)])
-          return rollDice(s, makeDice(s.options.diceCount))
+          const next = rollDice(s, makeDice(s.options.diceCount))
+          setRollKey((k) => k + 1)
+          return next
         })
         busyRef.current = false
       }, 300)
@@ -149,6 +153,7 @@ export default function App() {
           if (next !== s) setHistory((h) => [...h, serializeState(s)])
           return next
         })
+        recordMove(step)
         busyRef.current = false
       }, 450)
       return () => {
@@ -188,7 +193,9 @@ export default function App() {
       const t = setTimeout(() => {
         setState((s) => {
           setHistory((h) => [...h, serializeState(s)])
-          return rollDice(s, st.dice)
+          const next = rollDice(s, st.dice)
+          setRollKey((k) => k + 1)
+          return next
         })
         setTut((cur) => (cur ? { ...cur, step: cur.step + 1 } : cur))
       }, 600)
@@ -302,6 +309,15 @@ export default function App() {
     hintTimer.current = setTimeout(() => setHint(null), 2600)
   }
 
+  // 最近一步走子（可视化）：记录最后一次 applyMove 的步与时间戳，2.4s 后自动清除
+  const [lastMove, setLastMove] = useState<{ move: Move; ts: number } | null>(null)
+  const lastMoveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const recordMove = (move: Move) => {
+    setLastMove({ move, ts: Date.now() })
+    if (lastMoveTimer.current) clearTimeout(lastMoveTimer.current)
+    lastMoveTimer.current = setTimeout(() => setLastMove(null), 2400)
+  }
+
   const tryApply = (movePath: { from: number | null; to: number | null } | undefined): boolean => {
     if (!movePath) return false
     const move = legal.find(
@@ -310,6 +326,7 @@ export default function App() {
     if (!move) return false
     pushSnapshot()
     setState((s) => applyMove(s, move))
+    recordMove(move)
     setSelected(null)
     return true
   }
@@ -533,7 +550,8 @@ export default function App() {
         {mode === 'pve' && (
           <div className="ai-picker">
             <label>AI：</label>
-            <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value as 'random' | 'greedy')}>
+            <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value as 'random' | 'greedy' | 'advanced')}>
+              <option value="advanced">进阶（前瞻）</option>
               <option value="greedy">启发式</option>
               <option value="random">随机</option>
             </select>
@@ -574,14 +592,24 @@ export default function App() {
 
       <div className="status-bar">
         <div className="dice">
-          {state.dice ? state.dice.join(' · ') : '掷骰中…'}
-          {state.isDoubles && <em>（双采）</em>}
-          {state.bonusRollPending && <em>（赏一掷）</em>}
+          <Dice dice={state.dice} rollKey={rollKey} doubles={state.isDoubles} bonusPending={state.bonusRollPending} />
         </div>
         <div className="status-text">{status}</div>
       </div>
 
       {hint && <div className="hint-bar">{hint}</div>}
+
+      {lastMove && !replayMode && (
+        <div className="move-bar">
+          {lastMove.move.player === 'white' ? '白马' : '黑马'}
+          {' '}
+          {lastMove.move.from === null
+            ? `入局 → 第 ${lastMove.move.to} 梁`
+            : lastMove.move.to === null
+              ? `第 ${lastMove.move.from} 梁 拈出离盘`
+              : `${lastMove.move.from} → ${lastMove.move.to}${lastMove.move.hit ? '（打马）' : ''}`}
+        </div>
+      )}
 
       {tut && tutStep && (
         <div className="tut-panel">
@@ -605,6 +633,7 @@ export default function App() {
         onPointClick={onPointClick}
         onDragFrom={onDragFrom}
         onDropTo={onDropTo}
+        lastMove={replayMode ? null : lastMove?.move ?? null}
         tutFrom={tutStep && (tutStep.kind === 'pick' || tutStep.kind === 'place' || tutStep.kind === 'bearoff') ? tutStep.from : undefined}
         tutTo={tutStep && (tutStep.kind === 'place' || tutStep.kind === 'enter') ? tutStep.to : undefined}
       />

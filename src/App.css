@@ -94,6 +94,16 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+.move-bar {
+  background: #14366e;
+  color: #cfe0ff;
+  border-radius: 10px;
+  padding: 6px 14px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 /* 互动教学面板 */
 .tut-panel {
   background: #14366e;

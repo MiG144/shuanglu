@@ -1,0 +1,81 @@
+.dice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dice-empty {
+  color: #8a8070;
+  font-size: 14px;
+}
+
+/* 每次掷骰（key 变化）重播滚动动画 */
+.die {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 12px);
+  grid-template-rows: repeat(3, 12px);
+  gap: 2px;
+  padding: 6px;
+  width: 52px;
+  height: 52px;
+  background: #fff;
+  border: 1px solid #c9bfa4;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  animation: die-shake 0.7s ease-in-out;
+}
+
+@keyframes die-shake {
+  0% { transform: rotate(0deg) scale(1); }
+  20% { transform: rotate(-14deg) scale(1.15); }
+  40% { transform: rotate(10deg) scale(0.94); }
+  60% { transform: rotate(-8deg) scale(1.08); }
+  80% { transform: rotate(5deg) scale(0.98); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.pip {
+  background: transparent;
+  border-radius: 50%;
+  align-self: center;
+  justify-self: center;
+  width: 8px;
+  height: 8px;
+}
+
+/* 每个点数对应位置点亮 */
+.die[data-pips='1'] .p5,
+.die[data-pips='2'] .p1, .die[data-pips='2'] .p9,
+.die[data-pips='3'] .p1, .die[data-pips='3'] .p5, .die[data-pips='3'] .p9,
+.die[data-pips='4'] .p1, .die[data-pips='4'] .p3, .die[data-pips='4'] .p7, .die[data-pips='4'] .p9,
+.die[data-pips='5'] .p1, .die[data-pips='5'] .p3, .die[data-pips='5'] .p5, .die[data-pips='5'] .p7, .die[data-pips='5'] .p9,
+.die[data-pips='6'] .p1, .die[data-pips='6'] .p3, .die[data-pips='6'] .p4, .die[data-pips='6'] .p6, .die[data-pips='6'] .p7, .die[data-pips='6'] .p9 {
+  background: #2b2b33;
+}
+
+.dice-tag {
+  color: #b8860b;
+  font-style: normal;
+  margin-left: 4px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dice-tag.bonus {
+  color: #7a4f2a;
+}
+
+/* 窄屏小骰 */
+@media (max-width: 640px) {
+  .die {
+    width: 40px;
+    height: 40px;
+    grid-template-columns: repeat(3, 9px);
+    grid-template-rows: repeat(3, 9px);
+    padding: 4px;
+  }
+  .pip {
+    width: 6px;
+    height: 6px;
+  }
+}
