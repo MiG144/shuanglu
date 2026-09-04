@@ -11,6 +11,8 @@ export {
   skipRemaining,
   allInHome,
   computeDoubled,
+  serializeState,
+  loadState,
   NUM_PIECES,
   NUM_POINTS,
 } from './engine'

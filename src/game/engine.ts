@@ -492,3 +492,24 @@ export function rollDice(state: GameState, dice: Die[], opts?: GameOptions): Gam
 export function hasAnyLegalMove(state: GameState, opts?: GameOptions): boolean {
   return legalMoves(state, opts).length > 0
 }
+
+// ----------------------------------------------------------------------------
+// 序列化（M3：存局 / 同步 / 快照）
+// ----------------------------------------------------------------------------
+
+/** 序列化对局状态为 JSON 字符串（纯数据：points/off/borneOff/…全量） */
+export function serializeState(state: GameState): string {
+  return JSON.stringify(state)
+}
+
+/** 反序列化（校验基本形状；非法返回 null） */
+export function loadState(json: string): GameState | null {
+  try {
+    const parsed = JSON.parse(json) as Partial<GameState>
+    if (!parsed || !Array.isArray(parsed.points) || parsed.points.length !== NUM_POINTS) return null
+    if (!parsed.off || !parsed.borneOff || !parsed.turn) return null
+    return parsed as GameState
+  } catch {
+    return null
+  }
+}

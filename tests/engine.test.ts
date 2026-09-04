@@ -7,6 +7,8 @@ import {
   skipRemaining,
   applyMove,
   initialPositionPoints,
+  serializeState,
+  loadState,
 } from '../src/game'
 import type { GameState } from '../src/game'
 
@@ -291,5 +293,20 @@ describe('M1 架构健全化', () => {
     // 非法走子：source 无马
     const fake = { player: 'white' as const, from: 1, to: 3, pip: 3 }
     expect(isLegalMove(rs, fake)).toBe(false)
+  })
+
+  it('序列化/反序列化往返一致（存局同步用）', () => {
+    let s = createInitialState('black', { variant: 'xia-zan', doublesBonusRoll: true } as any)
+    s = rollDice(s, [3, 3])
+    const json = serializeState(s)
+    const back = loadState(json)
+    expect(back).not.toBeNull()
+    expect(back!.turn).toBe('black')
+    expect(back!.dice).toEqual([3, 3])
+    expect(back!.isDoubles).toBe(true)
+    expect(back!.bonusRollPending).toBe(true)
+    expect(JSON.stringify(back)).toBe(json)
+    // 非法 JSON → null
+    expect(loadState('not json {')).toBeNull()
   })
 })
