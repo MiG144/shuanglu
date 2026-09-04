@@ -44,6 +44,22 @@
   color: #6a6250;
 }
 
+.tutorial-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutorial-rules-link {
+  border: 1px solid #cbbfa0;
+  background: #fff;
+  color: #4a4436;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
 .tutorial-steps {
   display: flex;
   flex-wrap: wrap;

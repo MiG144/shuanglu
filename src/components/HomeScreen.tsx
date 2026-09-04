@@ -14,6 +14,7 @@ interface HomeScreenProps {
   onWinsToWin: (n: number) => void
   onStart: () => void
   onTutorial: () => void
+  onRules: () => void
   onLoad: () => void
   onSave: () => void
 }
@@ -33,7 +34,7 @@ export function HomeScreen(props: HomeScreenProps) {
   const {
     variant, aiLevel, mode, playerColor, winsToWin,
     onVariant, onAiLevel, onMode, onPlayerColor, onWinsToWin,
-    onStart, onTutorial, onLoad, onSave,
+    onStart, onTutorial, onRules, onLoad, onSave,
   } = props
 
   return (
@@ -50,6 +51,7 @@ export function HomeScreen(props: HomeScreenProps) {
         <button className="home-start" onClick={onStart}>▶ 开始对局</button>
         <div className="home-actions-row">
           <button onClick={onTutorial}>🎮 互动教学</button>
+          <button onClick={onRules}>📖 完整规则</button>
           <button onClick={onSave}>💾 存档</button>
           <button onClick={onLoad}>📂 读档</button>
         </div>

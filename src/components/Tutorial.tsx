@@ -5,6 +5,7 @@ interface TutorialProps {
   open: boolean
   onClose: () => void
   onStartInteractive?: () => void
+  onRules?: () => void
 }
 
 /** 教学步骤（内容依据《谱双》规则定稿 v0.3） */
@@ -108,7 +109,7 @@ const STEPS = [
   },
 ]
 
-export function Tutorial({ open, onClose, onStartInteractive }: TutorialProps) {
+export function Tutorial({ open, onClose, onStartInteractive, onRules }: TutorialProps) {
   const [step, setStep] = useState(0)
   if (!open) return null
 
@@ -120,7 +121,12 @@ export function Tutorial({ open, onClose, onStartInteractive }: TutorialProps) {
       <div className="tutorial" onClick={(e) => e.stopPropagation()}>
         <div className="tutorial-header">
           <h2>双陆棋 · 新手教学</h2>
-          <button className="tutorial-close" onClick={onClose} aria-label="关闭教学">✕</button>
+          <div className="tutorial-header-right">
+            {onRules && (
+              <button className="tutorial-rules-link" onClick={onRules}>📖 完整规则</button>
+            )}
+            <button className="tutorial-close" onClick={onClose} aria-label="关闭教学">✕</button>
+          </div>
         </div>
 
         {onStartInteractive && (

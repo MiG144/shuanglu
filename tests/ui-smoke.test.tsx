@@ -4,6 +4,7 @@ import React from 'react'
 import App from '../src/App'
 import { Board } from '../src/components/Board'
 import { Tutorial } from '../src/components/Tutorial'
+import { RulesManual } from '../src/components/RulesManual'
 import { createInitialState, rollDice, applyMove, chooseMove } from '../src/game'
 
 describe('UI 渲染冒烟（SSR，renderToString）', () => {
@@ -36,6 +37,19 @@ describe('UI 渲染冒烟（SSR，renderToString）', () => {
     expect(html).toContain('拈出')
     // open=false 时不渲染
     const hidden = renderToString(React.createElement(Tutorial, { open: false, onClose: () => {} }))
+    expect(hidden.trim()).toBe('')
+  })
+
+  it('RulesManual 规则手册可渲染且含图（Board 演示局）与关键规则', () => {
+    const html = renderToString(React.createElement(RulesManual, { open: true, onClose: () => {} }))
+    expect(html).toContain('规则手册')
+    expect(html).toContain('打马')
+    expect(html).toContain('拈出')
+    expect(html).toContain('开局摆位')
+    // 含演示棋盘（图文并茂）
+    expect(html).toContain('board')
+    // 隐藏时不渲染
+    const hidden = renderToString(React.createElement(RulesManual, { open: false, onClose: () => {} }))
     expect(hidden.trim()).toBe('')
   })
 

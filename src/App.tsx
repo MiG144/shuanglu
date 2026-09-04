@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { Board } from './components/Board'
 import { HomeScreen } from './components/HomeScreen'
+import { RulesManual } from './components/RulesManual'
 import { Tutorial } from './components/Tutorial'
 import type { Die, GameOptions, GameState, Player } from './game'
 import {
@@ -75,6 +76,7 @@ export default function App() {
       return true
     }
   })
+  const [showRules, setShowRules] = useState(false)
   const busyRef = useRef(false)
 
   // 热座：双方都是人类（本机轮流，隐藏 AI）；PVE：只有执子方是人类
@@ -468,6 +470,7 @@ export default function App() {
           onWinsToWin={setWinsToWin}
           onStart={startFromHome}
           onTutorial={startInteractive}
+          onRules={() => setShowRules(true)}
           onLoad={() => document.getElementById('load-game-input')?.click()}
           onSave={saveToFile}
         />
@@ -479,7 +482,8 @@ export default function App() {
           style={{ display: 'none' }}
           onChange={(e) => e.target.files?.[0] && loadFromFile(e.target.files[0])}
         />
-        <Tutorial open={showTutorial} onClose={closeTutorial} onStartInteractive={startInteractive} />
+        <Tutorial open={showTutorial} onClose={closeTutorial} onStartInteractive={startInteractive} onRules={() => setShowRules(true)} />
+        <RulesManual open={showRules} onClose={() => setShowRules(false)} />
       </div>
     )
   }
@@ -548,6 +552,7 @@ export default function App() {
 
         <button onClick={startNewGame}>新的一局</button>
         <button onClick={() => setShowTutorial(true)}>教学</button>
+        <button onClick={() => setShowRules(true)}>规则</button>
         <button onClick={undo} disabled={history.length === 0}>悔棋</button>
         <button onClick={enterReplay} disabled={history.length === 0}>复盘</button>
         <button onClick={saveToFile}>存档</button>
@@ -610,7 +615,8 @@ export default function App() {
         <span className="score">比分：白 {matchScore.white} − {matchScore.black} 黑</span>
       </div>
 
-      <Tutorial open={showTutorial} onClose={closeTutorial} onStartInteractive={startInteractive} />
+      <Tutorial open={showTutorial} onClose={closeTutorial} onStartInteractive={startInteractive} onRules={() => setShowRules(true)} />
+      <RulesManual open={showRules} onClose={() => setShowRules(false)} />
     </div>
   )
 }
