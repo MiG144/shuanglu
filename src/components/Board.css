@@ -1,7 +1,7 @@
 /* 双陆棋盘布局 */
 .board {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 4px;
   padding: 16px;
   background: #7a4f2a;
@@ -11,7 +11,8 @@
 }
 
 .point {
-  min-height: 120px;
+  /* 高度随宽度收缩：窄屏（手机）约 64px，宽屏 120px */
+  min-height: clamp(64px, 16vw, 120px);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -112,10 +113,41 @@
 }
 
 .piece {
-  width: 24px;
-  height: 24px;
+  width: clamp(14px, 4.5vw, 24px);
+  height: clamp(14px, 4.5vw, 24px);
   border-radius: 50% 50% 6px 50%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* 窄屏：棋子间距收紧、计数字号略缩 */
+@media (max-width: 640px) {
+  .board {
+    gap: 3px;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .point {
+    min-height: clamp(56px, 15vw, 96px);
+    gap: 2px;
+    padding: 4px 2px;
+  }
+  .stack {
+    gap: 1px;
+  }
+  .point .count {
+    font-size: 9px;
+  }
+  .gate-mark {
+    font-size: 11px;
+  }
+}
+
+/* 触屏设备：去掉悬停类视觉提示（拖拽不可用，点选为主） */
+@media (hover: none) {
+  .point {
+    cursor: pointer;
+  }
 }
 
 .piece.white {

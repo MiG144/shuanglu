@@ -3,6 +3,23 @@
   font-size: 26px;
 }
 
+.app-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-btn {
+  border: 1px solid #c9bfa4;
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
 .app-header p {
   margin: 0 0 16px;
   color: #6a6250;
@@ -165,4 +182,79 @@
   cursor: pointer;
   text-decoration: underline;
   margin-left: 4px;
+}
+
+/* ---------- 移动端适配 ---------- */
+@media (max-width: 640px) {
+  #root {
+    padding: 10px;
+  }
+
+  .app-header h1 {
+    font-size: 21px;
+  }
+
+  .app-header p {
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  /* 控制栏：两列网格，控件占满 */
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .controls > * {
+    min-width: 0;
+  }
+
+  .controls .variant-picker,
+  .controls .ai-picker,
+  .controls .wins-picker,
+  .controls .mode-picker {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .controls select {
+    width: 100%;
+    max-width: none;
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+
+  .controls button {
+    padding: 8px 10px;
+    font-size: 14px;
+    min-height: 40px;
+  }
+
+  /* 状态栏可换行 */
+  .status-bar {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .hint-bar {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .off-info {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+  }
+
+  .replay-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }

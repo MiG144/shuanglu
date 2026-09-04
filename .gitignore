@@ -6,6 +6,9 @@ dist
 dist-ssr
 dist-node-types
 
+# SEA 单文件打包产物（本地生成：node scripts/build-sea.mjs）
+dist-app/
+
 # TypeScript incremental build info
 *.tsbuildinfo
 

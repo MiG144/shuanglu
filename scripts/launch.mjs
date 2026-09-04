@@ -1,22 +1,59 @@
 // ============================================================================
-// 双陆棋 · 一键启动器（Windows）
-// 用法：双击「启动双陆棋.vbs」→ 本脚本自动：
-//   1) 若 dist 未构建，先执行 npm run build
-//   2) 在空闲端口启动 vite preview（静态服务构建产物，无需编译、秒开）
-//   3) 自动用默认浏览器打开游戏页
-//   4) 把服务 PID 写入 server.pid（供「停止双陆棋.vbs」使用）
+// 双陆棋 · 一键启动器（跨平台，Node 20+）
+// 用法：node scripts/launch.mjs（或 SEA 打包后的 exe 双击）
+//   1) 若 dist 未构建或源码更新，先执行 npm run build
+//   2) 幂等：若已有本项目服务在跑（server.pid 且端口响应），直接打开浏览器
+//   3) 否则在空闲端口启动 vite preview，写入 server.pid
+//   4) 自动用默认浏览器打开主菜单
+// 根目录由本文件位置推导（import.meta.dirname），不依赖 cwd。
 // ============================================================================
 import { spawn, execSync } from 'node:child_process'
 import fs from 'node:fs'
-import http from 'node:http'
 import path from 'node:path'
 import net from 'node:net'
+import { fileURLToPath } from 'node:url'
 
-const root = process.cwd()
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const root = path.resolve(__dirname, '..')
+
 const DIST = path.join(root, 'dist', 'index.html')
 const BASE_PORT = 4173
 const PID_FILE = path.join(root, 'server.pid')
 const NO_OPEN = process.env.NO_OPEN === '1' // 供测试：不自动弹浏览器
+
+/** 探测某 URL 是否已在响应（幂等判断用） */
+async function ping(url, timeoutMs = 800) {
+  try {
+    const ctrl = new AbortController()
+    const t = setTimeout(() => ctrl.abort(), timeoutMs)
+    const res = await fetch(url, { signal: ctrl.signal })
+    clearTimeout(t)
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+// ---------- 0. 幂等：已有服务则直接打开 ----------
+async function alreadyRunning() {
+  if (!fs.existsSync(PID_FILE)) return false
+  const pid = Number(fs.readFileSync(PID_FILE, 'utf8').trim())
+  if (!Number.isInteger(pid) || pid <= 0) {
+    fs.rmSync(PID_FILE, { force: true }) // 残留无效 pid，清理
+    return false
+  }
+  // 端口是否真正响应（比 pid 探活更可靠）
+  if (await ping(`http://127.0.0.1:${BASE_PORT}/`)) {
+    return BASE_PORT
+  }
+  // pid 文件在但端口没起来：进程可能已死——清文件，走正常启动
+  try {
+    process.kill(pid, 0)
+  } catch {
+    fs.rmSync(PID_FILE, { force: true })
+  }
+  return false
+}
 
 // ---------- 1. 构建（仅在缺失或源码更新时） ----------
 function ensureBuild() {
@@ -96,6 +133,15 @@ function openBrowser(url) {
 
 // ---------- 主流程 ----------
 try {
+  // 幂等：服务已在本机运行则直接打开浏览器
+  const runningPort = await alreadyRunning()
+  if (runningPort) {
+    const url = `http://127.0.0.1:${runningPort}/`
+    console.log(`[双陆棋] 服务已在运行：${url}`)
+    openBrowser(url)
+    process.exit(0)
+  }
+
   ensureBuild()
   const port = await findPort(BASE_PORT)
   const url = `http://127.0.0.1:${port}/`
@@ -115,6 +161,6 @@ try {
   console.log(`[双陆棋] 已启动：${url}`)
   openBrowser(url)
 } catch (err) {
-  console.error('[双陆棋] 启动失败：', err)
+  console.error('[双陆棋] 启动失败：', err.message || err)
   process.exitCode = 1
 }

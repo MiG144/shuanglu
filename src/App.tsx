@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { Board } from './components/Board'
+import { HomeScreen } from './components/HomeScreen'
 import { Tutorial } from './components/Tutorial'
 import type { Die, GameOptions, GameState, Player } from './game'
 import {
@@ -54,6 +55,7 @@ const STORAGE_KEY = 'shuanglu.current'
 export default function App() {
   const [state, setState] = useState<GameState>(() => createInitialState('white'))
   const [history, setHistory] = useState<string[]>([]) // 快照栈（悔棋）
+  const [view, setView] = useState<'home' | 'game'>('home') // 主菜单 / 对局
   const [mode, setMode] = useState<'pve' | 'hotseat'>('pve')
   const [playerColor, setPlayerColor] = useState<Player>('white')
   const [variant, setVariant] = useState<GameOptions['variant']>('ping')
@@ -374,6 +376,18 @@ export default function App() {
     setReplayStep(0)
   }
 
+  // 主菜单「开始对局」：切到对局视图并开局
+  const startFromHome = () => {
+    startNewGame()
+    setView('game')
+  }
+
+  // 返回主菜单（保留当前局面，可从主菜单读档或再进）
+  const goHome = () => {
+    setView('home')
+    setSelected(null)
+  }
+
   const undo = () => {
     if (history.length === 0) return
     const prev = history[history.length - 1]
@@ -438,11 +452,48 @@ export default function App() {
     }
   }
 
+  if (view === 'home') {
+    return (
+      <div className="app">
+        <HomeScreen
+          variant={variant}
+          aiLevel={aiLevel}
+          mode={mode}
+          playerColor={playerColor}
+          winsToWin={winsToWin}
+          onVariant={setVariant}
+          onAiLevel={setAiLevel}
+          onMode={setMode}
+          onPlayerColor={setPlayerColor}
+          onWinsToWin={setWinsToWin}
+          onStart={startFromHome}
+          onTutorial={startInteractive}
+          onLoad={() => document.getElementById('load-game-input')?.click()}
+          onSave={saveToFile}
+        />
+        {/* 读档用的隐藏 input，供主菜单调用 */}
+        <input
+          id="load-game-input"
+          type="file"
+          accept=".json"
+          style={{ display: 'none' }}
+          onChange={(e) => e.target.files?.[0] && loadFromFile(e.target.files[0])}
+        />
+        <Tutorial open={showTutorial} onClose={closeTutorial} onStartInteractive={startInteractive} />
+      </div>
+    )
+  }
+
   return (
     <div className="app">
       <header className="app-header">
-        <h1>双陆棋 · 打双陆</h1>
-        <p>中式打双陆 · 《谱双》规则（v0.3）</p>
+        <div className="app-header-row">
+          <div>
+            <h1>双陆棋 · 打双陆</h1>
+            <p>中式打双陆 · 《谱双》规则（v0.3）</p>
+          </div>
+          <button className="home-btn" onClick={goHome}>≡ 主菜单</button>
+        </div>
       </header>
 
       <div className="controls">

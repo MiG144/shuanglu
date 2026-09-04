@@ -7,9 +7,12 @@ import { Tutorial } from '../src/components/Tutorial'
 import { createInitialState, rollDice, applyMove, chooseMove } from '../src/game'
 
 describe('UI 渲染冒烟（SSR，renderToString）', () => {
-  it('App 可渲染', () => {
+  it('App 可渲染：默认进入主菜单（启动页）', () => {
     const html = renderToString(React.createElement(App))
     expect(html).toContain('双陆棋')
+    // 主菜单元素
+    expect(html).toContain('开始对局')
+    expect(html).toContain('互动教学')
     expect(html).toContain('平双陆')
   })
 
