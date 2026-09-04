@@ -1,0 +1,37 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+dist-node-types
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Env
+*.local
+.env
+.env.*
+
+# 大体积古籍扫描件（原件在用户本地，不入库；规则结论在 docs/*.md 与 OCR 文本中）
+docs/*.pdf

@@ -1,0 +1,63 @@
+.app-header h1 {
+  margin: 0 0 4px;
+  font-size: 26px;
+}
+
+.app-header p {
+  margin: 0 0 16px;
+  color: #6a6250;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.controls button {
+  padding: 6px 14px;
+  border: 1px solid #c9bfa4;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.controls button.active {
+  background: #2b2b33;
+  color: #f4f0e6;
+  border-color: #2b2b33;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #e2d9c2;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.dice em {
+  color: #b8860b;
+  font-style: normal;
+  margin-left: 6px;
+}
+
+.off-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  color: #6a6250;
+  font-size: 14px;
+}
