@@ -25,6 +25,9 @@ const APP_DIR = path.dirname(process.execPath)
 const PID_FILE = path.join(APP_DIR, 'server.json')
 const BASE_PORT = 4173
 const SHUTDOWN_PATH = '/__shutdown__'
+const SHUTDOWN_DELAY_MS = 3000 // 收到 shutdown 后延迟退出，期间新请求可取消
+
+let shutdownTimer = null
 
 // ---------- 内部辅助 ----------
 function findPortFrom(start) {
@@ -64,11 +67,20 @@ function openBrowser(url) {
 function serve(req, res) {
   const url = req.url || '/'
   if (url === SHUTDOWN_PATH) {
-    // 停止：清理并退出
-    try { fs.rmSync(PID_FILE, { force: true }) } catch {}
+    // 停止（延迟退出 + 新请求取消）：避免关标签/刷新误杀仍在使用的服务
+    if (shutdownTimer) clearTimeout(shutdownTimer)
+    shutdownTimer = setTimeout(() => {
+      try { fs.rmSync(PID_FILE, { force: true }) } catch {}
+      process.exit(0)
+    }, SHUTDOWN_DELAY_MS)
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' })
-    res.end('shutdown')
-    setTimeout(() => process.exit(0), 50)
+    res.end('shutdown scheduled')
+    return
+  }
+  if (url === '/__meta__') {
+    // 网页用于判断"当前是本地 SEA 离线服务"（线上 Pages 无此端点）
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ mode: 'sea', name: 'shuanglu' }))
     return
   }
   let pathName = url.split('?')[0]
@@ -79,6 +91,11 @@ function serve(req, res) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' })
     res.end('Not Found')
     return
+  }
+  // 任何正常请求到来时，若正在等待退出则取消（刷新/多标签继续使用）
+  if (shutdownTimer) {
+    clearTimeout(shutdownTimer)
+    shutdownTimer = null
   }
   res.writeHead(200, { 'Content-Type': asset.mime, 'Cache-Control': 'no-cache' })
   res.end(Buffer.from(asset.b64, 'base64'))
@@ -112,7 +129,8 @@ async function main() {
   fs.writeFileSync(PID_FILE, JSON.stringify({ pid: process.pid, port }), 'utf8')
 
   const url = `http://127.0.0.1:${port}/`
-  console.log(`[双陆棋] 已启动：${url}（按需停止：删除或请求 /__shutdown__）`)
+  console.log(`[双陆棋] 已启动：${url}`)
+  console.log('[双陆棋] 停止：主菜单「退出本地服务」按钮，或直接关闭浏览器（自动退出）')
   openBrowser(url)
 
   // 保持进程（server.listen 已持有事件循环）

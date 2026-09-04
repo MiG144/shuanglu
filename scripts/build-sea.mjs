@@ -18,7 +18,6 @@ const root = path.resolve(__dirname, '..')
 const outDir = path.join(root, 'dist-app')
 const EXE = process.platform === 'win32' ? '.exe' : ''
 const startName = `双陆棋${EXE}`
-const stopName = `停止双陆棋${EXE}`
 
 // 1) 保证 postject
 if (!fs.existsSync(path.join(root, 'node_modules', 'postject'))) {
@@ -73,15 +72,12 @@ function buildOne(mainFile, outputName) {
   console.log(`[SEA] ✓ ${target}`)
 }
 
-// 复制 SEA 入口到 dist-app（sea-entry 内的 require('./sea-assets.cjs') 相对自身定位）
-// 启动用 sea-app.cjs（已在 make-sea-assets 中内联资源映射）；停止用 sea-stop.cjs
-fs.copyFileSync(path.join(__dirname, 'sea-stop.cjs'), path.join(outDir, 'sea-stop.cjs'))
-
+// 复制 SEA 入口到 dist-app（sea-app.cjs 已在 make-sea-assets 中内联资源映射）
+// 单 exe 方案：只打包启动 exe（停止通过页面按钮 / 关闭浏览器自动退出，无需第二个 exe）
 buildOne(path.join(outDir, 'sea-app.cjs'), startName)
-buildOne(path.join(outDir, 'sea-stop.cjs'), stopName)
 
 // 清理包内中间文件（sea-assets.cjs 保留以便重复构建；入口副本留在 dist-app）
 console.log('[SEA] 完成。')
 console.log(`[SEA] 启动：${path.join(outDir, startName)}`)
-console.log(`[SEA] 停止：${path.join(outDir, stopName)}`)
-console.log('[SEA] 提示：dist-app/ 为打包产物（gitignore），exe 可整体拷到任意文件夹使用。')
+console.log('[SEA] 提示：dist-app/ 为打包产物（gitignore），exe 可整体拷到任意文件夹使用')
+console.log('[SEA] 停止：游戏主菜单「退出本地服务」按钮，或直接关闭浏览器（自动退出）')

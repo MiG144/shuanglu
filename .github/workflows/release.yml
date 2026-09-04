@@ -1,7 +1,7 @@
 # ===========================================================================
 # 双陆棋 · Release：打 tag（v*）时构建离线单文件 exe 并发布到 GitHub Release
 # 触发：push 标签 v1.0.0 / v0.2.0 等
-# 产出：Release 附件 —— shuanglu.exe + stop-shuanglu.exe（ASCII 名避免 asset 标签问题）
+# 产出：Release 附件 —— shuanglu.exe（单 exe；停止=主菜单按钮/关浏览器自动退出）
 # ===========================================================================
 name: Release
 
@@ -31,23 +31,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build SEA executables
+      - name: Build SEA executable
         run: node scripts/build-sea.mjs
 
       # 重命名为 ASCII（Release 资产标签兼容性）
       - name: Rename to ASCII
         shell: pwsh
-        run: |
-          Copy-Item "dist-app/双陆棋.exe" dist-app/shuanglu.exe -Force
-          Copy-Item "dist-app/停止双陆棋.exe" dist-app/stop-shuanglu.exe -Force
+        run: Copy-Item "dist-app/双陆棋.exe" dist-app/shuanglu.exe -Force
 
-      - name: Upload executables
+      - name: Upload executable
         uses: actions/upload-artifact@v4
         with:
-          name: shuanglu-win-executables
-          path: |
-            dist-app/shuanglu.exe
-            dist-app/stop-shuanglu.exe
+          name: shuanglu-win-executable
+          path: dist-app/shuanglu.exe
           if-no-files-found: error
 
   release:
@@ -57,17 +53,17 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Download executables
+      - name: Download executable
         uses: actions/download-artifact@v4
         with:
-          name: shuanglu-win-executables
+          name: shuanglu-win-executable
           path: dist-app
 
-      # 用 gh CLI 创建 Release 并上传资产（对文件名/标签处理更稳）
-      - name: Create Release and upload assets
+      # 用 gh CLI 创建 Release 并上传资产（单 exe；停止=主菜单按钮/关闭浏览器自动退出）
+      - name: Create Release and upload asset
         run: |
           gh release create "${{ github.ref_name }}" \
-            dist-app/shuanglu.exe dist-app/stop-shuanglu.exe \
+            dist-app/shuanglu.exe \
             --repo "${{ github.repository }}" \
             --title "双陆棋 ${{ github.ref_name }}" \
             --generate-notes

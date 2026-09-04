@@ -17,6 +17,10 @@ interface HomeScreenProps {
   onRules: () => void
   onLoad: () => void
   onSave: () => void
+  soundOn: boolean
+  onToggleSound: () => void
+  isSea: boolean
+  onStopSea: () => void
 }
 
 /** 变体选项（与 App 一致） */
@@ -35,6 +39,7 @@ export function HomeScreen(props: HomeScreenProps) {
     variant, aiLevel, mode, playerColor, winsToWin,
     onVariant, onAiLevel, onMode, onPlayerColor, onWinsToWin,
     onStart, onTutorial, onRules, onLoad, onSave,
+    soundOn, onToggleSound, isSea, onStopSea,
   } = props
 
   return (
@@ -109,7 +114,15 @@ export function HomeScreen(props: HomeScreenProps) {
         </div>
       </div>
 
-      <p className="home-foot">规则考据：宋·洪遵《谱双》· 《欣赏编》本 · 公有领域古籍</p>
+      <p className="home-foot">
+      规则考据：宋·洪遵《谱双》· 《欣赏编》本 · 公有领域古籍
+      <button className="home-sound" onClick={onToggleSound} title={soundOn ? '关闭音效' : '开启音效'}>
+        {soundOn ? '🔊' : '🔇'} {soundOn ? '音效开' : '音效关'}
+      </button>
+      {isSea && (
+        <button className="home-sound" onClick={onStopSea} title="退出本地离线服务">⏻ 退出本地服务</button>
+      )}
+    </p>
     </div>
   )
 }

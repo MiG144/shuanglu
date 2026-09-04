@@ -10,6 +10,11 @@
   gap: 12px;
 }
 
+.app-header-btns {
+  display: flex;
+  gap: 8px;
+}
+
 .home-btn {
   border: 1px solid #c9bfa4;
   background: #fff;

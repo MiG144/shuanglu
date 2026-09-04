@@ -17,6 +17,7 @@ import {
   loadState,
 } from './game'
 import { TUT_LESSONS, createLessonState, getLesson } from './game/tutorial'
+import { sfx } from './game/sfx'
 
 const TUTORIAL_KEY = 'shuanglu.tutorialSeen'
 
@@ -79,7 +80,60 @@ export default function App() {
   })
   const [showRules, setShowRules] = useState(false)
   const [rollKey, setRollKey] = useState(0)
+  const [soundOn, setSoundOn] = useState(() => !sfx.isMuted())
   const busyRef = useRef(false)
+
+  // 音效：首次用户交互后解锁 AudioContext
+  useEffect(() => {
+    const unlock = () => sfx.unlock()
+    window.addEventListener('pointerdown', unlock)
+    window.addEventListener('keydown', unlock)
+    return () => {
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('keydown', unlock)
+    }
+  }, [])
+
+  const toggleSound = () => {
+    const muted = sfx.toggle()
+    setSoundOn(!muted)
+    if (!muted) sfx.roll()
+  }
+
+  // ---- 本地 SEA 服务：自动退出（关闭浏览器）与手动退出 ----
+  const [isSea, setIsSea] = useState(false)
+  useEffect(() => {
+    let cancelled = false
+    fetch('/__meta__')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((m) => {
+        if (!cancelled && m && m.mode === 'sea') setIsSea(true)
+      })
+      .catch(() => { /* 非 SEA 环境（如 Pages 线上）忽略 */ })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // 关闭浏览器/标签页 / 刷新 → 通知本地服务自动退出（服务端延迟退出防误杀）
+  useEffect(() => {
+    if (!isSea) return
+    const onPageHide = () => {
+      try {
+        navigator.sendBeacon('/__shutdown__')
+      } catch {
+        /* 忽略 */
+      }
+    }
+    window.addEventListener('pagehide', onPageHide)
+    return () => window.removeEventListener('pagehide', onPageHide)
+  }, [isSea])
+
+  const stopSeaService = () => {
+    fetch('/__shutdown__', { method: 'GET' })
+      .then(() => flashHint('本地服务将在片刻后退出（可关闭此页面）'))
+      .catch(() => flashHint('当前非离线模式，无需退出服务'))
+  }
 
   // 热座：双方都是人类（本机轮流，隐藏 AI）；PVE：只有执子方是人类
   const humanTurn = !replayMode && (mode === 'hotseat' ? state.phase !== 'ended' : state.turn === playerColor && state.phase !== 'ended')
@@ -108,6 +162,7 @@ export default function App() {
           setHistory((h) => [...h, serializeState(s)])
           const next = rollDice(s, makeDice(s.options.diceCount))
           setRollKey((k) => k + 1)
+          sfx.roll()
           return next
         })
         busyRef.current = false
@@ -166,6 +221,7 @@ export default function App() {
   // ---------- 终局计筹 ----------
   useEffect(() => {
     if (state.phase === 'ended' && state.winner) {
+      sfx.win()
       setMatchScore((sc) => ({
         ...sc,
         [state.winner!]: sc[state.winner!] + (state.doubled ? 2 : 1),
@@ -195,6 +251,7 @@ export default function App() {
           setHistory((h) => [...h, serializeState(s)])
           const next = rollDice(s, st.dice)
           setRollKey((k) => k + 1)
+          sfx.roll()
           return next
         })
         setTut((cur) => (cur ? { ...cur, step: cur.step + 1 } : cur))
@@ -316,6 +373,10 @@ export default function App() {
     setLastMove({ move, ts: Date.now() })
     if (lastMoveTimer.current) clearTimeout(lastMoveTimer.current)
     lastMoveTimer.current = setTimeout(() => setLastMove(null), 2400)
+    // 音效
+    if (move.hit) sfx.hit()
+    else if (move.bearsOff) sfx.bearOff()
+    else if (move.reenters) sfx.reenter()
   }
 
   const tryApply = (movePath: { from: number | null; to: number | null } | undefined): boolean => {
@@ -490,6 +551,10 @@ export default function App() {
           onRules={() => setShowRules(true)}
           onLoad={() => document.getElementById('load-game-input')?.click()}
           onSave={saveToFile}
+          onToggleSound={toggleSound}
+          soundOn={soundOn}
+          isSea={isSea}
+          onStopSea={stopSeaService}
         />
         {/* 读档用的隐藏 input，供主菜单调用 */}
         <input
@@ -513,7 +578,12 @@ export default function App() {
             <h1>双陆棋 · 打双陆</h1>
             <p>中式打双陆 · 《谱双》规则（v0.3）</p>
           </div>
-          <button className="home-btn" onClick={goHome}>≡ 主菜单</button>
+          <div className="app-header-btns">
+            <button className="home-btn" onClick={toggleSound} title={soundOn ? '关闭音效' : '开启音效'}>
+              {soundOn ? '🔊' : '🔇'}
+            </button>
+            <button className="home-btn" onClick={goHome}>≡ 主菜单</button>
+          </div>
         </div>
       </header>
 
