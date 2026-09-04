@@ -1,5 +1,12 @@
 # 双陆棋 · 打双陆
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/MiG144/shuanglu/deploy.yml?label=build%20%26%20deploy)](https://github.com/MiG144/shuanglu/actions)
+[![React](https://img.shields.io/badge/React-18-61dafb.svg)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6.svg)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646cff.svg)](https://vite.dev)
+[![在线试玩](https://img.shields.io/badge/%F0%9F%8E%AE%20Play-https%3A%2F%2Fmig144.github.io%2Fshuanglu%2F-brightgreen)](https://mig144.github.io/shuanglu/)
+
 中式双陆棋（打双陆）Web 小游戏。以宋代洪遵《谱双》五卷为规则依据——规则原文按**《欣赏编》十四卷（明·沈津编，明正德六年刊本）**扫描本识别核对，并以识典古籍电子本（翁同龢清抄本）互校。
 支持 PVE（人机对战）与 PVP（本地热座），内置新手教学与互动式实战教学。
 
@@ -10,7 +17,7 @@
 部署到 GitHub Pages 后，直接访问：
 
 ```
-https://<用户名>.github.io/<仓库名>/
+https://mig144.github.io/shuanglu/
 ```
 
 构建产物使用相对路径 base，任意子路径托管均可正常加载。
@@ -116,19 +123,23 @@ docs/
 | 卷四 | 南番东夷：四架八、南皮、大食（三骰）、日本（归一为胜） |
 | 卷五 | 总录：常局格制、南北局例、事始、盘马（两门二十四路）、骰子、赌赛、名称、杂记 |
 
-## 🚀 发布到 GitHub
+## 🚀 发布与日常更新
 
-仓库已内置发布所需的全部配置（`.github/workflows/deploy.yml`、相对路径 base、`.gitignore`/`.gitattributes`）。步骤：
+本仓库已发布：
 
-1. **创建远端仓库**（GitHub 网页新建，名字如 `shuanglu`，公开或私有均可）：
-   ```bash
-   git remote add origin https://github.com/<用户名>/<仓库名>.git
-   git push -u origin main
-   ```
-2. **启用 Pages**：仓库 Settings → Pages → Source 选 **GitHub Actions**（保存后无需额外操作）。
-3. **等待部署**：push 完成后 Actions 自动构建并部署（可手动用 Actions 页的 *Deploy to GitHub Pages* 触发），完成后显示在线地址 `https://<用户名>.github.io/<仓库名>/`。
+- **仓库**：https://github.com/MiG144/shuanglu
+- **在线地址**：https://mig144.github.io/shuanglu/
+- **部署方式**：GitHub Pages（Source = GitHub Actions），`.github/workflows/deploy.yml` 负责构建+测试+部署，每次 push 自动生效。
 
-> 注意：`docs/欣赏编….pdf`（约 27MB 古籍扫描件）未入库（见 `.gitignore`），因此仓库体积很小；规则结论与 OCR 文本均在 `docs/`。
+日常更新只需：
+
+```bash
+git add -A
+git commit -m "描述改动"
+git push        # 自动触发 Actions 构建部署，约 1-2 分钟后线上更新
+```
+
+> 说明：`docs/欣赏编….pdf`（约 27MB 古籍扫描件）未入库（见 `.gitignore`），因此仓库体积很小；规则结论与 OCR 文本均在 `docs/`。
 
 ## 📄 许可
 
