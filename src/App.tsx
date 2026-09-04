@@ -596,7 +596,7 @@ export default function App() {
         <div className="app-header-row">
           <div>
             <h1>双陆棋 · 打双陆</h1>
-            <p>中式打双陆 · 《谱双》规则（v0.3）</p>
+            <p>依《谱双》古制的中式双陆棋</p>
           </div>
           <div className="app-header-btns">
             <button className="home-btn" onClick={toggleSound} title={soundOn ? '关闭音效' : '开启音效'}>
@@ -743,12 +743,6 @@ export default function App() {
         tutFrom={tutStep && (tutStep.kind === 'pick' || tutStep.kind === 'place' || tutStep.kind === 'bearoff') ? tutStep.from : undefined}
         tutTo={tutStep && (tutStep.kind === 'place' || tutStep.kind === 'enter') ? tutStep.to : undefined}
       />
-
-      <div className="off-info">
-        <span>界外：白 {state.off.white} / 黑 {state.off.black}</span>
-        <span>离盘：白 {state.borneOff.white} / 黑 {state.borneOff.black}</span>
-        <span className="score">比分：白 {matchScore.white} − {matchScore.black} 黑</span>
-      </div>
 
       <Tutorial open={showTutorial} onClose={closeTutorial} onStartInteractive={startInteractive} onRules={() => setShowRules(true)} />
       <RulesManual open={showRules} onClose={() => setShowRules(false)} />

@@ -26,12 +26,21 @@
   border-radius: 6px;
 }
 
+.home-quote {
+  color: var(--c-primary);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  margin: 4px 0 4px;
+}
+
 .home-sub {
-  color: #7a4f2a;
+  color: var(--c-muted);
   font-weight: 700;
   margin: 0 0 6px;
-  font-size: 15px;
-  letter-spacing: 0.04em;
+  font-size: 14px;
+  letter-spacing: 0.06em;
 }
 
 .home-actions {

@@ -1,120 +1,116 @@
-/* ============ 双陆棋盘：朱砂红漆盘 · 双金边 · 上下边带圆坑 · 月牙门 · 青绿中带 · 红酒瓶棋子 ============ */
+/* ============ 双陆棋盘：朱砂红平底 · 单金边 · 两侧圆坑 · 居中月牙门 · 青绿中带 · 红酒瓶棋子（纯扁平） ============ */
 
-/* 棋盘容器：双层金色边框（外描边 + 内描边），红漆底 */
+/* 棋盘容器：单层金色描边，直角，纯色扁平淡无光影 */
 .board {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 10px 16px 12px;
+  padding: 0 12px 0;
   margin-bottom: 16px;
-  border-radius: 16px;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.08), transparent 55%),
-    linear-gradient(180deg, var(--c-lacquer) 0%, var(--c-lacquer-dark) 100%);
+  background: var(--c-lacquer);
   border: 2px solid var(--c-gold-deep);
-  outline: 2px solid var(--c-gold);
-  outline-offset: 4px;
-  box-shadow: 0 8px 22px rgba(150, 45, 25, 0.24);
+  border-radius: 0;
 }
 
-/* 上下马列：各 12 列 */
+/* 上下两排：左右两组（各 6 列）+ 居中月牙门槽，圆坑靠两边、中间留出门区 */
 .play-row {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 4px;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
 }
 
-/* 单个梁：圆坑标记（贴边）+ 马列（向盘心堆叠），整体为点击/拖拽区域 */
+.point-group {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 2px;
+}
+
+/* 单个梁：圆坑标记（贴外缘）+ 马列（向盘心堆叠），点击/拖拽区域 */
 .point {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: clamp(104px, 18vw, 158px);
+  min-height: clamp(72px, 12vw, 100px);
   cursor: default;
-  border-radius: 8px;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  transition: outline-color 0.15s, transform 0.1s, background 0.15s;
+  border-radius: 10px;
+  transition: background 0.15s, transform 0.1s;
 }
 
-/* 圆坑标记：贴边的小金色圆（视觉标记，不点、不与棋子重合），内嵌马数 */
+/* 圆坑标记：贴边的小金色圆（视觉标记，不点、不与棋子重合，无数字） */
 .point .pit {
   position: absolute;
   z-index: 3;
-  width: clamp(22px, 3vw, 28px);
+  width: clamp(15px, 2vw, 19px);
   aspect-ratio: 1;
   border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 50% 38%, #ecc96f, var(--c-gold-deep));
-  box-shadow: inset 0 1px 2px rgba(120, 78, 8, 0.4), 0 1px 1px rgba(255, 255, 255, 0.14);
+  background: var(--c-gold);
 }
 
 .point-top .pit { top: 2px; left: 50%; transform: translateX(-50%); }
 .point-bottom .pit { bottom: 2px; left: 50%; transform: translateX(-50%); }
 
-/* 计数角标：放在小圆坑上（边带，不与棋子重合） */
-.point .count {
-  font-size: 10px;
-  color: #4a3508;
-  font-weight: 700;
-  font-family: var(--font-serif, serif);
-  line-height: 1;
-}
-
 /* 上排：马靠圆坑往下堆（向盘心）；下排：马靠圆坑往上堆 */
-.point-top { justify-content: flex-start; padding-top: 4px; }
-.point-bottom { justify-content: flex-end; padding-bottom: 4px; }
+.point-top { justify-content: flex-start; padding-top: 6px; }
+.point-bottom { justify-content: flex-end; padding-bottom: 6px; }
 
-/* 交互态：朱砂盘上用清晰描边 + 轻微放大 */
+/* 交互态：柔和底色 + 圆角内环（更精致，不用生硬外框） */
 .point.movable {
-  background: rgba(255, 214, 140, 0.12);
-  outline-color: #ffe0a0;
+  background: rgba(255, 222, 150, 0.16);
   cursor: pointer;
-  transform: scale(1.02);
 }
 
 .point.target {
-  background: rgba(255, 220, 120, 0.2);
-  outline-color: #ffd25f;
+  background: rgba(255, 225, 130, 0.22);
+  box-shadow: inset 0 0 0 2px rgba(224, 193, 63, 0.85);
   cursor: pointer;
-  animation: target-pulse 1.1s ease-in-out infinite;
+  animation: pulse 1.1s ease-in-out infinite;
 }
 
 .point.bearoff {
   background: rgba(150, 231, 176, 0.2);
-  outline-color: #8fe3a8;
+  box-shadow: inset 0 0 0 2px rgba(120, 200, 150, 0.9);
   cursor: pointer;
 }
 
 .point.selected {
-  outline-color: #ffffff;
-  outline-width: 3px;
+  box-shadow: inset 0 0 0 2px #ffffff;
 }
 
 .point.tut-guide {
-  outline-color: #4f8ef0;
-  animation: tut-pulse 1.1s ease-in-out infinite;
+  box-shadow: inset 0 0 0 2px #4f8ef0;
+  animation: pulse 1.1s ease-in-out infinite;
 }
 
 .point.last-move {
-  outline-color: #ffcf5c;
+  box-shadow: inset 0 0 0 2px rgba(255, 207, 92, 0.9);
 }
 
-@keyframes target-pulse {
-  0%, 100% { outline-color: #ffd25f; }
-  50% { outline-color: #fff3c4; }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
 }
 
-@keyframes tut-pulse {
-  0%, 100% { outline-color: #4f8ef0; }
-  50% { outline-color: #8fb7f7; }
+/* 居中月牙门槽（加宽 → 月牙更宽、两脚贴棋盘外框） */
+.gate {
+  width: clamp(96px, 13vw, 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 红酒瓶棋子堆（《谱双》"上径小、下径大、底平"· 束腰）：放大、拉长、少量重叠 */
+.gate svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.gate-moon {
+  fill: var(--c-gold);
+}
+
+/* 红酒瓶棋子堆（《谱双》"上径小、下径大、底平"· 束腰）：放大、重叠 */
 .stack {
   display: flex;
   flex-direction: column;
@@ -123,8 +119,8 @@
   z-index: 2;
 }
 
-.point-top .stack { justify-content: flex-start; margin-top: 28px; }
-.point-bottom .stack { justify-content: flex-end; margin-bottom: 28px; }
+.point-top .stack { justify-content: flex-start; margin-top: 14px; }
+.point-bottom .stack { justify-content: flex-end; margin-bottom: 14px; }
 
 .piece.bottle {
   display: inline-flex;
@@ -134,12 +130,12 @@
 }
 
 .piece.bottle .bottle-shape {
-  width: 24px;
+  width: 22px;
   height: 34px;
   overflow: visible;
 }
 
-/* 少量重叠：每一枚盖住上一枚一点，像一排站立的酒瓶 */
+/* 每枚盖住上一枚一部分，像一排站立的酒瓶 */
 .stack .piece:not(:first-child) {
   margin-top: -12px;
 }
@@ -147,13 +143,13 @@
 .bottle-body.white {
   fill: var(--c-ivory);
   stroke: #cbb98a;
-  stroke-width: 1.2;
+  stroke-width: 1.1;
 }
 
 .bottle-body.black {
   fill: #322d26;
   stroke: #14110d;
-  stroke-width: 1.2;
+  stroke-width: 1.1;
 }
 
 /* 落子动画：最近一步目标格最后一枚入场 */
@@ -167,59 +163,39 @@
   100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* 中间青绿色三框格信息带 */
+/* 中间青绿色扁平信息带：与两侧金边直接相连，细竖线分隔，无嵌套子框 */
 .middle-band {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #2f9f83, #237a66);
-  border: 1px solid rgba(255, 240, 214, 0.35);
-}
-
-.mid-cell {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: 6px 8px;
-  border-radius: 8px;
+  margin: 0 -12px;
+  padding: 8px 10px;
+  background: var(--c-teal);
+  border-top: 2px solid var(--c-gold-deep);
+  border-bottom: 2px solid var(--c-gold-deep);
   color: #eafaf3;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 240, 214, 0.28);
 }
 
-.mid-main {
-  background: rgba(255, 255, 255, 0.15);
+.mid-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0 18px;
+  border-left: 1px solid rgba(234, 250, 243, 0.35);
+  font-size: 13px;
+}
+
+.mid-item:first-child {
+  border-left: none;
 }
 
 .mid-tag {
-  font-size: 12px;
-  letter-spacing: 1px;
-  font-family: var(--font-serif, serif);
+  color: rgba(234, 250, 243, 0.8);
 }
 
 .mid-val {
-  font-size: 12px;
-  opacity: 0.88;
+  font-weight: 700;
 }
-
-/* 月牙门：上下两条长边正中央各一枚（上开口朝上、下开口朝下） */
-.crescent {
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  transform: translateX(-50%);
-  fill: var(--c-gold);
-  filter: drop-shadow(0 1px 2px rgba(90, 40, 10, 0.35));
-  pointer-events: none;
-}
-
-.cres-top { top: -2px; }
-.cres-bottom { bottom: -2px; }
 
 /* 触屏设备 */
 @media (hover: none) {
@@ -232,31 +208,36 @@
 @media (max-width: 640px) {
   .board {
     gap: 6px;
-    padding: 8px 12px 10px;
-    border-radius: 14px;
+    padding: 8px 10px 10px;
     margin-bottom: 10px;
   }
+  .middle-band {
+    margin: 0 -10px;
+  }
   .play-row {
-    gap: 3px;
+    gap: 6px;
+  }
+  .point-group {
+    gap: 2px;
   }
   .point {
-    min-height: clamp(78px, 13vw, 118px);
+    min-height: clamp(78px, 14vw, 112px);
   }
   .point .pit {
-    width: clamp(20px, 5vw, 30px);
+    width: clamp(15px, 4vw, 20px);
   }
   .piece.bottle .bottle-shape {
-    width: 18px;
-    height: 30px;
+    width: 19px;
+    height: 29px;
   }
   .stack .piece:not(:first-child) {
-    margin-top: -7px;
+    margin-top: -10px;
   }
-  .crescent {
-    width: 118px;
-    height: 46px;
+  .gate {
+    width: clamp(44px, 10vw, 64px);
   }
-  .mid-cell, .mid-tag, .mid-val {
-    font-size: 10px;
+  .mid-item {
+    font-size: 11px;
+    padding: 0 10px;
   }
 }

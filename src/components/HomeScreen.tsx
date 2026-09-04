@@ -53,12 +53,13 @@ export function HomeScreen(props: HomeScreenProps) {
         <h1 className="home-title font-serif">
           双陆棋
           <svg className="home-seal" viewBox="0 0 64 64" width="46" height="46" aria-label="雙陸印">
-            <rect x="3" y="3" width="58" height="58" rx="6" fill="#c0392b" />
+            <rect x="3" y="3" width="58" height="58" rx="6" fill="#b5523d" />
             <text x="32" y="30" textAnchor="middle" fontSize="20" fill="#f8f2e3">雙</text>
             <text x="32" y="52" textAnchor="middle" fontSize="20" fill="#f8f2e3">陸</text>
           </svg>
         </h1>
-        <p className="home-sub font-serif">「雙陸近古號雅戲」 · 打雙陸 · 依據宋《譜雙》v0.3</p>
+        <p className="home-quote font-serif">「雙陸近古號雅戲」</p>
+        <p className="home-sub font-serif">打雙陸 · 依《譜雙》古制</p>
       </div>
 
       <div className="home-actions">

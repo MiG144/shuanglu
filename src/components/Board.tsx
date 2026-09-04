@@ -105,10 +105,8 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
         draggable={isMovable}
         title={`梁 ${g}（白${white} / 黑${black}）`}
       >
-        {/* 圆坑标记（边带·视觉标记，不与棋子重合）：金色小圆 + 马数 */}
-        <span className="pit">
-          <span className="count">{white + black}</span>
-        </span>
+        {/* 圆坑标记（边带·视觉标记，不与棋子重合） */}
+        <span className="pit" />
         {/* 马列：棋子堆叠（放大、略微拉长、少量重叠） */}
         <div className="stack">
           {Array.from({ length: white }).map((_, i) => (
@@ -122,43 +120,57 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
     )
   }
 
-  // 中间信息带内容（仅在空间充足时保留核心项）
+  // 中间信息带（扁平简条，无嵌套框）：当前方 + 比分 + 界外/离盘
   const turnLabel = state.turn === 'white' ? '白马' : '黑马'
   const sc = score ?? state.score
+  const offW = state.off.white
+  const offB = state.off.black
+  const borneW = state.borneOff.white
+  const borneB = state.borneOff.black
+
+  const half = 6
 
   return (
     <div className="board">
-      {/* 顶马列：马向下堆 */}
-      <div className="play-row top">{top.map(renderPoint)}</div>
-
-      {/* 中间青绿色三框格信息带 */}
-      <div className="middle-band">
-        <div className="mid-cell">
-          <span className="mid-tag">梁頭（起点）</span>
-          <span className="mid-val">界外 白 {state.off.white} · 黑 {state.off.black}</span>
+      {/* 顶马列：马向下堆，中央月牙门（两脚贴顶边、开口朝下）分割两侧 */}
+      <div className="play-row top">
+        <div className="point-group">{top.slice(0, half).map(renderPoint)}</div>
+        <div className="gate">
+          <svg viewBox="0 0 120 64" preserveAspectRatio="none" aria-hidden="true">
+            <path className="gate-moon" d="M18 1 C 32 38, 88 38, 102 1 C 88 25, 32 25, 18 1 Z" />
+          </svg>
         </div>
-        <div className="mid-cell mid-main">
-          <span className="mid-tag">轮到 {turnLabel}</span>
-          {sc && (
-            <span className="mid-val">比分 白 {sc.white} − {sc.black} 黑</span>
-          )}
-        </div>
-        <div className="mid-cell">
-          <span className="mid-tag">梁末（终点）</span>
-          <span className="mid-val">离盘 白 {state.borneOff.white} · 黑 {state.borneOff.black}</span>
-        </div>
+        <div className="point-group">{top.slice(half).map(renderPoint)}</div>
       </div>
 
-      {/* 底马列：马向上堆 */}
-      <div className="play-row bottom">{bottom.map(renderPoint)}</div>
+      {/* 中间青绿色扁平信息带（细竖线分隔，无子框） */}
+      <div className="middle-band">
+        <span className="mid-item">
+          <span className="mid-tag">轮到</span>
+          <b className="mid-val">{turnLabel}</b>
+        </span>
+        <span className="mid-item">
+          <span className="mid-tag">比分</span>
+          <b className="mid-val">白 {sc ? sc.white : 0} − {sc ? sc.black : 0} 黑</b>
+        </span>
+        <span className="mid-item">
+          <span className="mid-tag">界外</span>
+          <b className="mid-val">白 {offW} · 黑 {offB}</b>
+          <span className="mid-tag">离盘</span>
+          <b className="mid-val">白 {borneW} · 黑 {borneB}</b>
+        </span>
+      </div>
 
-      {/* 月牙门：上下两条长边正中央各一枚（上开口朝上、下开口朝下），弯月体、尖角分明 */}
-      <svg className="crescent cres-top" viewBox="0 0 140 60" width="196" height="78" aria-hidden="true">
-        <path d="M43 14 A 44 44 0 0 1 97 14 A 40 40 0 0 0 43 14 Z" />
-      </svg>
-      <svg className="crescent cres-bottom" viewBox="0 0 140 60" width="196" height="78" aria-hidden="true">
-        <path d="M43 46 A 44 44 0 0 0 97 46 A 40 40 0 0 1 43 46 Z" />
-      </svg>
+      {/* 底马列：马向上堆，中央月牙门（两脚贴底边、开口朝上）分割两侧 */}
+      <div className="play-row bottom">
+        <div className="point-group">{bottom.slice(0, half).map(renderPoint)}</div>
+        <div className="gate">
+          <svg viewBox="0 0 120 64" preserveAspectRatio="none" aria-hidden="true">
+            <path className="gate-moon" d="M18 63 C 32 26, 88 26, 102 63 C 88 39, 32 39, 18 63 Z" />
+          </svg>
+        </div>
+        <div className="point-group">{bottom.slice(half).map(renderPoint)}</div>
+      </div>
     </div>
   )
 }
