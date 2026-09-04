@@ -26,7 +26,7 @@ describe('UI 渲染冒烟（SSR，renderToString）', () => {
     expect((html.match(/class="point/g) ?? []).length).toBe(24)
     expect(html).toContain('梁頭')
     expect(html).toContain('梁末')
-    expect(html).toContain('gate-crescent')
+    expect(html).toContain('crescent')
   })
 
   it('Tutorial 教学组件可渲染且含关键规则', () => {

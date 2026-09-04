@@ -1,5 +1,5 @@
 import './Board.css'
-import type { GameState, Move } from '../game'
+import type { GameState, Move, Player } from '../game'
 
 interface BoardProps {
   state: GameState
@@ -8,25 +8,30 @@ interface BoardProps {
   onPointClick?: (global: number) => void
   onDragFrom?: (global: number) => void
   onDropTo?: (global: number) => void
-  /** 互动教学：强引导点（期望点击的源/目标），高亮并添加点击指示光标 */
+  /** 互动教学：强引导点（期望点击的源/目标），高亮 */
   tutFrom?: number
   tutTo?: number
   /** 最近一步走子（可视化：源/目标短暂高亮） */
   lastMove?: Move | null
+  /** 多局系列比分（显示在中间信息带） */
+  score?: Record<Player, number>
 }
 
 /**
- * 双陆棋盘：展示 24 梁，白黑双方的马。
- * 布局按 12 列 U 型（上下各 12 梁），中间为门标。
+ * 双陆棋盘：仿《谱双》古盘——上下两条边带各 12 个圆坑（梁）+ 两枚月牙门，
+ * 中间为青绿色三框格信息带，双方马分置于上下两条马列中。
  *
- * 交互反馈（让玩家一眼知道"点什么"）：
- *   - movable（该格有可走动的己方马，可选中起点）：橙色脉冲
- *   - target（可选落点：走棋目标 / 入局落点）：黄色闪光
- *   - bearoff（可拈出源格）：绿色
- *   - selected（已选中起点）：白色粗框
- *   - 支持点击（点源→点目标）与 HTML5 拖拽（拖源→放目标）两种方式
+ * 布局（自上而下）：
+ *   顶边带（12 圆坑 + 月牙门）→ 顶马列（马向下堆）→ 中间信息带 → 底马列（马向上堆）→ 底边带
+ *
+ * 交互反馈：
+ *   - movable（可走动的己方马）：金圈
+ *   - target（可选落点：走棋/入局）：黄圈脉动
+ *   - bearoff（可拈出源格）：绿圈
+ *   - selected（已选中起点）：白粗圈
+ *   - 支持点击（点源→点目标）与 HTML5 拖拽（拖源→放目标）
  */
-export function Board({ state, legal, selected, onPointClick, onDragFrom, onDropTo, tutFrom, tutTo, lastMove }: BoardProps) {
+export function Board({ state, legal, selected, onPointClick, onDragFrom, onDropTo, tutFrom, tutTo, lastMove, score }: BoardProps) {
   // 近端（下排）用白方视角编号 1..12，远端（上排）13..24（示意）
   const bottom = Array.from({ length: 12 }, (_, i) => i + 1) // 1..12
   const top = Array.from({ length: 12 }, (_, i) => 24 - i)   // 24..13
@@ -51,7 +56,6 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
     const isMovable = movableSet.has(g)
     const isTarget = isMoveTarget(g) || isEntryTarget(g)
     const isLm = g === lmFrom || g === lmTo
-    // 上排（top）尖朝下，下排（bottom）尖朝上；用方向类区分三角朝向与堆叠方向
     const isTop = top.includes(g)
     const cls = [
       'point',
@@ -63,15 +67,13 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
       g === tutFrom || g === tutTo ? 'tut-guide' : '',
       isLm ? 'last-move' : '',
     ].filter(Boolean).join(' ')
-    const tutLabel = g === tutFrom ? '（点击这里）' : g === tutTo ? '（目标位置）' : ''
     // 红酒瓶式棋子（《谱双》"上径小、下径大、底平、束腰"）：
     // 直身圆柱（略收颈）→ 圆肩 → 细颈 → 平顶，无顶端圆球
     const Bottle = ({ color }: { color: 'white' | 'black' }) => (
       <span className={`piece bottle ${color}`} aria-hidden="true">
-        <svg viewBox="0 0 24 38" width="24" height="38" className="bottle-shape">
-          {/* 瓶身：平底 → 直身 → 圆肩 → 细颈 → 平顶 */}
+        <svg viewBox="0 0 24 40" width="24" height="40" className="bottle-shape">
           <path
-            d="M4.6 36 L19.4 36 C20 36 20.4 35.6 20.4 35 L20.4 21 C20.4 15 15 14.4 15 9.4 L15 6.4 C15 5.4 14.3 4.6 13.2 4.6 L10.8 4.6 C9.7 4.6 9 5.4 9 6.4 L9 9.4 C9 14.4 3.6 15 3.6 21 L3.6 35 C3.6 35.6 4 36 4.6 36 Z"
+            d="M4.6 38 L19.4 38 C20 38 20.4 37.6 20.4 37 L20.4 22 C20.4 15 15 14.6 15 9.6 L15 6.6 C15 5.6 14.3 4.8 13.2 4.8 L10.8 4.8 C9.7 4.8 9 5.6 9 6.6 L9 9.6 C9 14.6 3.6 15 3.6 22 L3.6 37 C3.6 37.6 4 38 4.6 38 Z"
             className={`bottle-body ${color}`}
           />
         </svg>
@@ -83,7 +85,6 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
         className={cls}
         onClick={() => onPointClick?.(g)}
         onDragStart={(e) => {
-          // 仅允许从"可走动的源格"拖起
           if (!isMovable) e.preventDefault()
           else {
             e.dataTransfer.setData('text/plain', String(g))
@@ -102,13 +103,13 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
           if (isTarget || isBearOffSource(g)) onDropTo?.(g)
         }}
         draggable={isMovable}
-        title={`梁 ${g}（白${white} / 黑${black}）${tutLabel}`}
+        title={`梁 ${g}（白${white} / 黑${black}）`}
       >
-        {tutLabel && <span className="tut-badge">👆 {tutLabel}</span>}
-        {isLm && (
-          <span className="lm-badge">{g === lmTo ? '→ 落点' : '← 起点'}</span>
-        )}
-        <span className="count">{white + black}</span>
+        {/* 圆坑标记（边带·视觉标记，不与棋子重合）：金色小圆 + 马数 */}
+        <span className="pit">
+          <span className="count">{white + black}</span>
+        </span>
+        {/* 马列：棋子堆叠（放大、略微拉长、少量重叠） */}
         <div className="stack">
           {Array.from({ length: white }).map((_, i) => (
             <Bottle key={`w${i}`} color="white" />
@@ -121,22 +122,43 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
     )
   }
 
+  // 中间信息带内容（仅在空间充足时保留核心项）
+  const turnLabel = state.turn === 'white' ? '白马' : '黑马'
+  const sc = score ?? state.score
+
   return (
     <div className="board">
-      <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 4 }}>
-        {top.map(renderPoint)}
+      {/* 顶马列：马向下堆 */}
+      <div className="play-row top">{top.map(renderPoint)}</div>
+
+      {/* 中间青绿色三框格信息带 */}
+      <div className="middle-band">
+        <div className="mid-cell">
+          <span className="mid-tag">梁頭（起点）</span>
+          <span className="mid-val">界外 白 {state.off.white} · 黑 {state.off.black}</span>
+        </div>
+        <div className="mid-cell mid-main">
+          <span className="mid-tag">轮到 {turnLabel}</span>
+          {sc && (
+            <span className="mid-val">比分 白 {sc.white} − {sc.black} 黑</span>
+          )}
+        </div>
+        <div className="mid-cell">
+          <span className="mid-tag">梁末（终点）</span>
+          <span className="mid-val">离盘 白 {state.borneOff.white} · 黑 {state.borneOff.black}</span>
+        </div>
       </div>
-      {/* 门槽：中央实心月牙门（《谱双》"月牙门"），两侧标示起点/终点 */}
-      <div className="gate-row">
-        <span className="gate-label font-serif">梁頭</span>
-        <svg className="gate-crescent" viewBox="0 0 120 56" width="150" height="52" aria-hidden="true">
-          <path d="M16 8 A 54 54 0 1 1 104 8 A 58 58 0 1 0 16 8 Z" />
-        </svg>
-        <span className="gate-label font-serif">梁末</span>
-      </div>
-      <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 4 }}>
-        {bottom.map(renderPoint)}
-      </div>
+
+      {/* 底马列：马向上堆 */}
+      <div className="play-row bottom">{bottom.map(renderPoint)}</div>
+
+      {/* 月牙门：上下两条长边正中央各一枚（上开口朝上、下开口朝下），弯月体、尖角分明 */}
+      <svg className="crescent cres-top" viewBox="0 0 140 60" width="196" height="78" aria-hidden="true">
+        <path d="M43 14 A 44 44 0 0 1 97 14 A 40 40 0 0 0 43 14 Z" />
+      </svg>
+      <svg className="crescent cres-bottom" viewBox="0 0 140 60" width="196" height="78" aria-hidden="true">
+        <path d="M43 46 A 44 44 0 0 0 97 46 A 40 40 0 0 1 43 46 Z" />
+      </svg>
     </div>
   )
 }

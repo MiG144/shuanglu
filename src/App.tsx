@@ -739,6 +739,7 @@ export default function App() {
         onDragFrom={onDragFrom}
         onDropTo={onDropTo}
         lastMove={replayMode ? null : lastMove?.move ?? null}
+        score={matchScore}
         tutFrom={tutStep && (tutStep.kind === 'pick' || tutStep.kind === 'place' || tutStep.kind === 'bearoff') ? tutStep.from : undefined}
         tutTo={tutStep && (tutStep.kind === 'place' || tutStep.kind === 'enter') ? tutStep.to : undefined}
       />

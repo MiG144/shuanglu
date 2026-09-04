@@ -91,9 +91,19 @@
 
 .home-settings-title {
   grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
   font-weight: 700;
   color: var(--c-ink);
   margin-bottom: 2px;
+}
+
+.home-settings-note {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--c-muted);
 }
 
 .home-field {
@@ -114,6 +124,17 @@
   font-size: 14px;
   background: #fff;
   color: var(--c-ink);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.home-field select:hover {
+  border-color: var(--c-gold);
+}
+
+.home-field select:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(192, 58, 44, 0.14);
 }
 
 .home-stats {
@@ -145,15 +166,27 @@
 }
 
 .home-foot {
-  text-align: center;
-  color: #8a7c66;
-  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   margin-top: 4px;
+  color: var(--c-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.home-foot-line {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.home-meta {
+  color: var(--c-muted);
+  letter-spacing: 0.02em;
 }
 
 .home-repo {

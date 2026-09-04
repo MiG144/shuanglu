@@ -72,7 +72,10 @@ export function HomeScreen(props: HomeScreenProps) {
       </div>
 
       <div className="home-settings">
-        <div className="home-settings-title">对局设置</div>
+        <div className="home-settings-title">
+          <span>对局设置</span>
+          <span className="home-settings-note">开始前按喜好配置</span>
+        </div>
 
         <div className="home-field">
           <label>模式</label>
@@ -131,15 +134,20 @@ export function HomeScreen(props: HomeScreenProps) {
         </div>
       </div>
 
-      <p className="home-foot">
-        <a className="home-repo" href={REPO_URL} target="_blank" rel="noreferrer">项目地址：{REPO_URL.replace('https://', '')}</a>
-        <button className="home-sound" onClick={onToggleSound} title={soundOn ? '关闭音效' : '开启音效'}>
-          {soundOn ? '🔊' : '🔇'} {soundOn ? '音效开' : '音效关'}
-        </button>
-        {isSea && (
-          <button className="home-sound" onClick={onStopSea} title="退出本地离线服务">⏻ 退出本地服务</button>
-        )}
-      </p>
+      <div className="home-foot">
+        <div className="home-foot-line">
+          <a className="home-repo" href={REPO_URL} target="_blank" rel="noreferrer">项目地址：{REPO_URL.replace('https://', '')}</a>
+        </div>
+        <div className="home-foot-line">
+          <span className="home-meta">© 2026 MiG144 · 依据宋·洪遵《谱双》 · MIT License</span>
+          <button className="home-sound" onClick={onToggleSound} title={soundOn ? '关闭音效' : '开启音效'}>
+            {soundOn ? '🔊' : '🔇'} {soundOn ? '音效开' : '音效关'}
+          </button>
+          {isSea && (
+            <button className="home-sound" onClick={onStopSea} title="退出本地离线服务">⏻ 退出本地服务</button>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
