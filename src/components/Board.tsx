@@ -64,15 +64,18 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
       isLm ? 'last-move' : '',
     ].filter(Boolean).join(' ')
     const tutLabel = g === tutFrom ? '（点击这里）' : g === tutTo ? '（目标位置）' : ''
-    // 马形棋子（捣衣椎形：尖顶/束腰/平底）
-    const Horse = ({ color }: { color: 'white' | 'black' }) => (
-      <span className={`piece horse ${color}`} aria-hidden="true">
-        <svg viewBox="0 0 20 26" width="18" height="23">
+    // 酒瓶/捣衣椎形棋子（《谱双》"上径小、下径大、底平、束腰"）：
+    // 窄颈 → 鼓腹 → 平底
+    const Bottle = ({ color }: { color: 'white' | 'black' }) => (
+      <span className={`piece bottle ${color}`} aria-hidden="true">
+        <svg viewBox="0 0 20 28" width="20" height="28" className="bottle-shape">
+          {/* 瓶身：上颈窄 (8→9) 鼓腹 (15) 平底收窄 */}
           <path
-            d="M10 1 C13 5 15 8 15 12 C15 17 13 20 11 24 L9 24 C7 20 5 17 5 12 C5 8 7 5 10 1 Z"
-            className={`horse-body ${color}`}
+            d="M8.2 2 C8 8 5.6 11 4.6 15 C3.6 19.4 5 24 7.6 26.6 L12.4 26.6 C15 24 16.4 19.4 15.4 15 C14.4 11 12 8 11.8 2 Z"
+            className={`bottle-body ${color}`}
           />
-          <circle cx="10" cy="6" r="1.1" className={`horse-eye ${color}`} />
+          {/* 瓶口圆环 */}
+          <ellipse cx="10" cy="2" rx="2.6" ry="1.1" className={`bottle-rim ${color}`} />
         </svg>
       </span>
     )
@@ -110,10 +113,10 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
         <span className="count">{white + black}</span>
         <div className="stack">
           {Array.from({ length: white }).map((_, i) => (
-            <Horse key={`w${i}`} color="white" />
+            <Bottle key={`w${i}`} color="white" />
           ))}
           {Array.from({ length: black }).map((_, i) => (
-            <Horse key={`b${i}`} color="black" />
+            <Bottle key={`b${i}`} color="black" />
           ))}
         </div>
       </div>

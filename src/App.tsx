@@ -82,6 +82,7 @@ export default function App() {
     }
   })
   const [showRules, setShowRules] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [rollKey, setRollKey] = useState(0)
   const [soundOn, setSoundOn] = useState(() => !sfx.isMuted())
   const [stats, setStats] = useState<MatchStats>(() => {
@@ -606,58 +607,9 @@ export default function App() {
         </div>
       </header>
 
-      <div className="controls">
-        <div className="mode-picker">
-          <label>模式：</label>
-          <select value={mode} onChange={(e) => setMode(e.target.value as 'pve' | 'hotseat')}>
-            <option value="pve">人机对战（PVE）</option>
-            <option value="hotseat">本地双人（热座）</option>
-          </select>
-        </div>
-
-        {mode === 'pve' && (
-          <div className="color-picker">
-            <label>执子：</label>
-            <button className={playerColor === 'white' ? 'active' : ''} onClick={() => { setPlayerColor('white'); startNewGame() }}>
-              白马
-            </button>
-            <button className={playerColor === 'black' ? 'active' : ''} onClick={() => { setPlayerColor('black'); startNewGame() }}>
-              黑马
-            </button>
-          </div>
-        )}
-
-        <div className="variant-picker">
-          <label>变体：</label>
-          <select value={variant ?? 'ping'} onChange={(e) => setVariant(e.target.value as GameOptions['variant'])}>
-            {VARIANTS.map((v) => (
-              <option key={v.value} value={v.value}> {v.label} — {v.hint}</option>
-            ))}
-          </select>
-        </div>
-
-        {mode === 'pve' && (
-          <div className="ai-picker">
-            <label>AI：</label>
-            <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value as 'random' | 'greedy' | 'advanced')}>
-              <option value="advanced">进阶（前瞻）</option>
-              <option value="greedy">启发式</option>
-              <option value="random">随机</option>
-            </select>
-          </div>
-        )}
-
-        <div className="wins-picker">
-          <label>先胜几局：</label>
-          <select value={winsToWin} onChange={(e) => setWinsToWin(Number(e.target.value))}>
-            <option value={1}>单局</option>
-            <option value={2}>先赢2局</option>
-            <option value={3}>先赢3局</option>
-            <option value={5}>先赢5局</option>
-          </select>
-        </div>
-
+      <div className="controls controls-main">
         <button onClick={startNewGame}>新的一局</button>
+        <button onClick={() => setShowSettings(true)}>⚙ 设置</button>
         <button onClick={() => setShowTutorial(true)}>教学</button>
         <button onClick={() => setShowRules(true)}>规则</button>
         <button onClick={undo} disabled={history.length === 0}>悔棋</button>
@@ -668,6 +620,63 @@ export default function App() {
           <input type="file" accept=".json" style={{ display: 'none' }} onChange={(e) => e.target.files?.[0] && loadFromFile(e.target.files[0])} />
         </label>
       </div>
+
+      {showSettings && (
+        <div className="settings-overlay" onClick={() => setShowSettings(false)}>
+          <div className="settings-panel" onClick={(e) => e.stopPropagation()}>
+            <div className="settings-head">
+              <h3 className="font-serif">对局设置</h3>
+              <button className="settings-close" onClick={() => setShowSettings(false)} aria-label="关闭">✕</button>
+            </div>
+            <div className="settings-grid">
+              <div className="settings-field">
+                <label>模式</label>
+                <select value={mode} onChange={(e) => setMode(e.target.value as 'pve' | 'hotseat')}>
+                  <option value="pve">人机对战（PVE）</option>
+                  <option value="hotseat">本地双人（热座）</option>
+                </select>
+              </div>
+              {mode === 'pve' && (
+                <div className="settings-field">
+                  <label>执子</label>
+                  <select value={playerColor} onChange={(e) => setPlayerColor(e.target.value as Player)}>
+                    <option value="white">白马</option>
+                    <option value="black">黑马</option>
+                  </select>
+                </div>
+              )}
+              <div className="settings-field">
+                <label>变体</label>
+                <select value={variant ?? 'ping'} onChange={(e) => setVariant(e.target.value as GameOptions['variant'])}>
+                  {VARIANTS.map((v) => (
+                    <option key={v.value} value={v.value}>{v.label} — {v.hint}</option>
+                  ))}
+                </select>
+              </div>
+              {mode === 'pve' && (
+                <div className="settings-field">
+                  <label>AI</label>
+                  <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value as 'random' | 'greedy' | 'advanced')}>
+                    <option value="advanced">进阶（前瞻）</option>
+                    <option value="greedy">启发式</option>
+                    <option value="random">随机</option>
+                  </select>
+                </div>
+              )}
+              <div className="settings-field">
+                <label>先胜几局</label>
+                <select value={winsToWin} onChange={(e) => setWinsToWin(Number(e.target.value))}>
+                  <option value={1}>单局</option>
+                  <option value={2}>先赢2局</option>
+                  <option value={3}>先赢3局</option>
+                  <option value={5}>先赢5局</option>
+                </select>
+              </div>
+            </div>
+            <button className="settings-done" onClick={() => setShowSettings(false)}>完成</button>
+          </div>
+        </div>
+      )}
 
       {replayMode && (
         <div className="replay-bar">

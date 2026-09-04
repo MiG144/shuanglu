@@ -48,6 +48,14 @@
   font-size: 14px;
 }
 
+.home-meta {
+  color: #8a8070;
+  font-size: 12px;
+  margin: 10px auto 0;
+  letter-spacing: 0.05em;
+  max-width: 520px;
+}
+
 .home-actions {
   display: flex;
   flex-direction: column;

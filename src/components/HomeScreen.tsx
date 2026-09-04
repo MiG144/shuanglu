@@ -61,6 +61,9 @@ export function HomeScreen(props: HomeScreenProps) {
         <p className="home-desc">
           中式双陆：24 梁双门，白马右归左、黑马左归右——掷骰行马，打马卡位，先拈尽者胜。
         </p>
+        <p className="home-meta font-serif">
+          規則定稿 v0.3 · 依據宋·洪遵《譜雙》 · React · TypeScript · MIT License
+        </p>
       </div>
 
       <div className="home-actions">
