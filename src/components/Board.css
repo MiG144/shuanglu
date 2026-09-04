@@ -1,71 +1,168 @@
-/* 双陆棋盘布局 */
+/* ============ 双陆棋盘：古棋味 × 扁平现代 ============ */
 .board {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 4px;
-  padding: 16px;
-  background: #7a4f2a;
-  border-radius: 12px;
+  gap: 5px;
+  padding: 14px;
+  background:
+    /* 细木纹：横向低对比渐变 */
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 26px),
+    linear-gradient(180deg, #6b4a2f 0%, #5a3d2b 55%, #4e3424 100%);
+  border-radius: 14px;
   margin-bottom: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(0, 0, 0, 0.25);
 }
 
+/* 三角梁（指向中线）：上排尖朝下、下排尖朝上 */
 .point {
-  /* 高度随宽度收缩：窄屏（手机）约 64px，宽屏 120px */
-  min-height: clamp(64px, 16vw, 120px);
-  border-radius: 8px;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 4px;
-  padding: 6px 4px;
-  background: rgba(244, 240, 230, 0.12);
-  border: 2px solid transparent;
   cursor: default;
-  position: relative;
-  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  transition: background 0.15s, transform 0.1s;
+  min-height: clamp(72px, 18vw, 128px);
+  background: linear-gradient(180deg, rgba(244, 226, 200, 0.22), rgba(244, 226, 200, 0.06));
 }
 
-/* 可走动的源格：橙色脉冲，吸引玩家点击 */
+.point-top {
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.point-bottom {
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* 交互态：clip-path 会裁掉外框高亮，用 drop-shadow/mask 组合强调；
+ * 直接以半透明复盖 + 底部光晕表达，保证主体仍是三角梁 */
 .point.movable {
-  border-color: #ffa94d;
-  background: rgba(255, 169, 77, 0.28);
+  background: linear-gradient(180deg, rgba(232, 149, 60, 0.28), rgba(232, 149, 60, 0.12));
+  filter: drop-shadow(0 0 3px rgba(232, 149, 60, 0.6));
   cursor: pointer;
-  animation: pulse-movable 1.2s ease-in-out infinite;
 }
 
-/* 已选中起点：白色粗框 + 放大，目标格随后显示 */
+.point.target {
+  background: linear-gradient(180deg, rgba(224, 184, 60, 0.32), rgba(224, 184, 60, 0.12));
+  filter: drop-shadow(0 0 3px rgba(224, 184, 60, 0.6));
+  cursor: pointer;
+}
+
+.point.bearoff {
+  background: linear-gradient(180deg, rgba(95, 174, 123, 0.32), rgba(95, 174, 123, 0.12));
+  filter: drop-shadow(0 0 3px rgba(95, 174, 123, 0.6));
+  cursor: pointer;
+}
+
 .point.selected {
-  border-color: #ffffff;
-  background: rgba(255, 255, 255, 0.28);
-  transform: scale(1.04);
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9));
+}
+
+.point.tut-guide {
+  filter: drop-shadow(0 0 7px rgba(29, 95, 208, 0.9));
+}
+
+.point.last-move {
+  filter: drop-shadow(0 0 6px rgba(106, 167, 255, 0.8));
+}
+
+/* 计数角标 */
+.point .count {
+  font-size: 11px;
+  color: rgba(244, 232, 210, 0.92);
+  font-family: var(--font-serif, serif);
+  position: absolute;
+  z-index: 4;
+}
+
+.point-top .count { top: 6px; }
+.point-bottom .count { bottom: 6px; }
+
+/* 马堆 */
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
   z-index: 2;
 }
 
-/* 可选落点（走棋目标 / 入局落点）：黄色闪烁 */
-.point.target {
-  border-color: #ffd766;
-  background: rgba(255, 215, 102, 0.25);
-  cursor: pointer;
-  animation: pulse-legal 1s ease-in-out infinite;
+.point-top .stack {
+  justify-content: flex-end;
+  margin-top: 5px;
 }
 
-/* 可拈出源格：绿色 */
-.point.bearoff {
-  border-color: #7ee08a;
-  background: rgba(126, 224, 138, 0.22);
-  cursor: pointer;
+.point-bottom .stack {
+  justify-content: flex-start;
+  margin-bottom: 5px;
 }
 
-/* 互动教学：强引导格（期望点击点） */
-.point.tut-guide {
-  border: 3px solid #fff;
-  outline: 3px solid #1d5fd0;
-  animation: pulse-legal 1s ease-in-out infinite;
-  box-shadow: 0 0 0 4px rgba(29, 95, 208, 0.5);
+/* 马形棋子（捣衣椎：尖顶/束腰/平底） */
+.piece.horse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
 }
 
+.piece.horse svg {
+  overflow: visible;
+}
+
+.horse-body.white {
+  fill: #f5ecd8;
+  stroke: #b9a67c;
+  stroke-width: 1;
+}
+
+.horse-eye.white {
+  fill: #6b4a2f;
+}
+
+.horse-body.black {
+  fill: #3a3630;
+  stroke: #17140f;
+  stroke-width: 1;
+}
+
+.horse-eye.black {
+  fill: #f5ecd8;
+}
+
+/* 落子动画：最近一步的目标格最后一马入场 */
+.point.last-move .stack .piece:last-child {
+  animation: arrive 0.45s ease-out;
+}
+
+@keyframes arrive {
+  0% { transform: translateY(-10px) scale(0.4); opacity: 0.2; }
+  60% { transform: translateY(2px) scale(1.12); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* 门标带 */
+.board .gate-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+}
+
+.gate-mark {
+  color: #e8d5b0;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+/* 教学与走子提示角标 */
 .tut-badge {
   position: absolute;
   top: -8px;
@@ -77,19 +174,11 @@
   padding: 1px 8px;
   border-radius: 999px;
   white-space: nowrap;
-  z-index: 3;
-}
-
-/* 最近一步走子可视化 */
-.point.last-move {
-  border-color: #6aa7ff;
-  background: rgba(106, 167, 255, 0.25);
-  box-shadow: 0 0 0 3px rgba(106, 167, 255, 0.5);
+  z-index: 5;
 }
 
 .lm-badge {
   position: absolute;
-  bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
   background: #1d5fd0;
@@ -98,71 +187,11 @@
   padding: 1px 8px;
   border-radius: 999px;
   white-space: nowrap;
-  z-index: 3;
+  z-index: 5;
 }
 
-@keyframes pulse-movable {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 169, 77, 0.75); }
-  50% { box-shadow: 0 0 0 6px rgba(255, 169, 77, 0); }
-}
-
-@keyframes pulse-legal {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 102, 0.7); }
-  50% { box-shadow: 0 0 0 5px rgba(255, 215, 102, 0); }
-}
-
-/* 拖拽进行中：整体略降低透明度，目标更醒目 */
-.board.dragging .point {
-  opacity: 0.85;
-}
-.board.dragging .point.legal,
-.board.dragging .point.bearoff {
-  opacity: 1;
-}
-
-.point .count {
-  font-size: 11px;
-  color: #f4f0e6;
-  opacity: 0.85;
-}
-
-.stack {
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
-  gap: 2px;
-}
-
-.piece {
-  width: clamp(14px, 4.5vw, 24px);
-  height: clamp(14px, 4.5vw, 24px);
-  border-radius: 50% 50% 6px 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
-}
-
-/* 窄屏：棋子间距收紧、计数字号略缩 */
-@media (max-width: 640px) {
-  .board {
-    gap: 3px;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-  }
-  .point {
-    min-height: clamp(56px, 15vw, 96px);
-    gap: 2px;
-    padding: 4px 2px;
-  }
-  .stack {
-    gap: 1px;
-  }
-  .point .count {
-    font-size: 9px;
-  }
-  .gate-mark {
-    font-size: 11px;
-  }
-}
+.point-top .lm-badge { top: 8px; bottom: auto; }
+.point-bottom .lm-badge { bottom: 8px; top: auto; }
 
 /* 触屏设备：去掉悬停类视觉提示（拖拽不可用，点选为主） */
 @media (hover: none) {
@@ -171,28 +200,25 @@
   }
 }
 
-.piece.white {
-  background: #f5f1e4;
-  border: 1px solid #c9bfa4;
-}
-
-.piece.black {
-  background: #2b2b33;
-  border: 1px solid #111;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 2px 4px rgba(0, 0, 0, 0.35);
-}
-
-/* 中间门标 */
-.board .gate-row {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2px 8px;
-}
-
-.gate-mark {
-  color: #f0d9a0;
-  font-size: 14px;
-  letter-spacing: 2px;
+/* 窄屏 */
+@media (max-width: 640px) {
+  .board {
+    gap: 3px;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .point {
+    min-height: clamp(60px, 16vw, 96px);
+  }
+  .piece.horse svg {
+    width: 13px;
+    height: 17px;
+  }
+  .point .count {
+    font-size: 9px;
+  }
+  .gate-mark {
+    font-size: 11px;
+  }
 }

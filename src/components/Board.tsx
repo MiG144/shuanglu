@@ -51,8 +51,11 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
     const isMovable = movableSet.has(g)
     const isTarget = isMoveTarget(g) || isEntryTarget(g)
     const isLm = g === lmFrom || g === lmTo
+    // 上排（top）尖朝下，下排（bottom）尖朝上；用方向类区分三角朝向与堆叠方向
+    const isTop = top.includes(g)
     const cls = [
       'point',
+      isTop ? 'point-top' : 'point-bottom',
       selected === g ? 'selected' : '',
       isMovable ? 'movable' : '',
       isTarget ? 'target' : '',
@@ -61,6 +64,18 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
       isLm ? 'last-move' : '',
     ].filter(Boolean).join(' ')
     const tutLabel = g === tutFrom ? '（点击这里）' : g === tutTo ? '（目标位置）' : ''
+    // 马形棋子（捣衣椎形：尖顶/束腰/平底）
+    const Horse = ({ color }: { color: 'white' | 'black' }) => (
+      <span className={`piece horse ${color}`} aria-hidden="true">
+        <svg viewBox="0 0 20 26" width="18" height="23">
+          <path
+            d="M10 1 C13 5 15 8 15 12 C15 17 13 20 11 24 L9 24 C7 20 5 17 5 12 C5 8 7 5 10 1 Z"
+            className={`horse-body ${color}`}
+          />
+          <circle cx="10" cy="6" r="1.1" className={`horse-eye ${color}`} />
+        </svg>
+      </span>
+    )
     return (
       <div
         key={g}
@@ -95,10 +110,10 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
         <span className="count">{white + black}</span>
         <div className="stack">
           {Array.from({ length: white }).map((_, i) => (
-            <span key={`w${i}`} className="piece white" />
+            <Horse key={`w${i}`} color="white" />
           ))}
           {Array.from({ length: black }).map((_, i) => (
-            <span key={`b${i}`} className="piece black" />
+            <Horse key={`b${i}`} color="black" />
           ))}
         </div>
       </div>
