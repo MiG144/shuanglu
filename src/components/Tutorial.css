@@ -113,6 +113,35 @@
   border-color: #2b2b33;
 }
 
+.tutorial-footer .tutorial-end-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tutorial-interactive-banner {
+  background: #eaf3ff;
+  border: 1px solid #b9d4f5;
+  border-radius: 10px;
+  margin: 0 20px 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.tutorial-interactive-banner .interactive-start {
+  display: block;
+  margin-top: 8px;
+  background: #1d5fd0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .tutorial-footer button:disabled {
   opacity: 0.4;
   cursor: default;

@@ -77,6 +77,55 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* 互动教学面板 */
+.tut-panel {
+  background: #14366e;
+  color: #f4f0e6;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border: 2px solid #5b8dee;
+}
+
+.tut-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.tut-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: #a9c8ff;
+}
+
+.tut-exit {
+  border: 1px solid #8fb3f5;
+  background: transparent;
+  color: #cfe0ff;
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.tut-text {
+  margin: 6px 0 10px;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.tut-next {
+  background: #2f8b3a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .off-info {
   display: flex;
   justify-content: space-between;

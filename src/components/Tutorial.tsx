@@ -4,6 +4,7 @@ import './Tutorial.css'
 interface TutorialProps {
   open: boolean
   onClose: () => void
+  onStartInteractive?: () => void
 }
 
 /** 教学步骤（内容依据《谱双》规则定稿 v0.3） */
@@ -107,7 +108,7 @@ const STEPS = [
   },
 ]
 
-export function Tutorial({ open, onClose }: TutorialProps) {
+export function Tutorial({ open, onClose, onStartInteractive }: TutorialProps) {
   const [step, setStep] = useState(0)
   if (!open) return null
 
@@ -121,6 +122,13 @@ export function Tutorial({ open, onClose }: TutorialProps) {
           <h2>双陆棋 · 新手教学</h2>
           <button className="tutorial-close" onClick={onClose} aria-label="关闭教学">✕</button>
         </div>
+
+        {onStartInteractive && (
+          <div className="tutorial-interactive-banner">
+            <strong>想边玩边学？</strong> 开始 <em>互动教学</em>——在真实棋盘上一步步亲手操作，系统即时校验：
+            <button className="interactive-start" onClick={onStartInteractive}>🎮 开始互动教学</button>
+          </div>
+        )}
 
         <div className="tutorial-steps">
           {STEPS.map((s, i) => (
@@ -142,7 +150,12 @@ export function Tutorial({ open, onClose }: TutorialProps) {
           {step < total - 1 ? (
             <button onClick={() => go(step + 1)}>下一步 ▶</button>
           ) : (
-            <button className="primary" onClick={onClose}>开始游戏！</button>
+            <div className="tutorial-end-actions">
+              {onStartInteractive && (
+                <button className="primary" onClick={onStartInteractive}>🎮 开始互动教学</button>
+              )}
+              <button onClick={onClose}>开始游戏！</button>
+            </div>
           )}
         </div>
       </div>

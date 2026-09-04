@@ -13,6 +13,7 @@ import {
   serializeState,
   loadState,
 } from './game'
+import { TUT_LESSONS, createLessonState, getLesson } from './game/tutorial'
 
 const TUTORIAL_KEY = 'shuanglu.tutorialSeen'
 
@@ -62,6 +63,9 @@ export default function App() {
   const [winsToWin, setWinsToWin] = useState(1)
   const [replayMode, setReplayMode] = useState(false)
   const [replayStep, setReplayStep] = useState(0)
+  // 互动教学会话：{ lesson, step }；null = 不在教学中
+  const [tut, setTut] = useState<{ lesson: number; step: number } | null>(null)
+  const [tutSeed, setTutSeed] = useState(0) // 强制重挂（课程切换时重置棋盘）
   const [showTutorial, setShowTutorial] = useState<boolean>(() => {
     try {
       return localStorage.getItem(TUTORIAL_KEY) !== '1'
@@ -86,6 +90,7 @@ export default function App() {
 
   // ---------- 回合驱动（掷骰 / 轮空 / AI），由 busyRef 防止重复调度 ----------
   useEffect(() => {
+    if (tut) return // 互动教学中，回合由教学向导控制
     if (busyRef.current) return
     if (replayMode) return
 
@@ -147,7 +152,7 @@ export default function App() {
         busyRef.current = false
       }
     }
-  }, [state, humanTurn, legal, aiLevel, replayMode, mode])
+  }, [state, humanTurn, legal, aiLevel, replayMode, mode, tut])
 
   // ---------- 终局计筹 ----------
   useEffect(() => {
@@ -159,6 +164,129 @@ export default function App() {
       // 达到目标局数才提示整场结束（这里先简单提示，详见状态栏）
     }
   }, [state.phase, state.winner, state.doubled])
+
+  // ---------- 互动教学 ----------
+  // 课程切换/开始：重建课程局面
+  useEffect(() => {
+    if (tut) {
+      setState(createLessonState(getLesson(tut.lesson)))
+      setSelected(null)
+      setHistory([])
+    }
+  }, [tut?.lesson, tutSeed])
+
+  // roll 步骤：自动掷骰并推进
+  useEffect(() => {
+    if (!tut) return
+    const lesson = getLesson(tut.lesson)
+    const st = lesson.steps[tut.step]
+    if (st && st.kind === 'roll') {
+      const t = setTimeout(() => {
+        setState((s) => {
+          setHistory((h) => [...h, serializeState(s)])
+          return rollDice(s, st.dice)
+        })
+        setTut((cur) => (cur ? { ...cur, step: cur.step + 1 } : cur))
+      }, 600)
+      return () => clearTimeout(t)
+    }
+  }, [tut, tutSeed])
+
+  const tutStep = tut ? getLesson(tut.lesson).steps[tut.step] : null
+
+  // 互动教学下一步（'下一课'或结束）
+  const tutAdvance = () => {
+    setTut((cur) => {
+      if (!cur) return cur
+      const lesson = getLesson(cur.lesson)
+      if (cur.step + 1 < lesson.steps.length) {
+        return { ...cur, step: cur.step + 1 }
+      }
+      if (cur.lesson + 1 < TUT_LESSONS.length) {
+        setTutSeed((x) => x + 1)
+        return { lesson: cur.lesson + 1, step: 0 }
+      }
+      return null // 全部完成
+    })
+    setSelected(null)
+  }
+
+  const tutExit = () => {
+    setTut(null)
+    setSelected(null)
+    setState(createInitialState(playerColor, variantOptions(variant)))
+  }
+
+  // 教学点击校验
+  const handleTutClick = (global: number) => {
+    if (!tutStep || !tut) return
+    switch (tutStep.kind) {
+      case 'pick': {
+        if (global === tutStep.from) {
+          setSelected(global)
+          flashHint('好的，再点黄色目标落点')
+          setTut((c) => (c ? { ...c, step: c.step + 1 } : c))
+        } else {
+          flashHint('请点击橙色脉冲的那匹马（第 ' + tutStep.from + ' 梁）')
+        }
+        break
+      }
+      case 'place': {
+        if (selected !== null && selected === tutStep.from && global === tutStep.to) {
+          pushSnapshot()
+          const m = legal.find((mm) => mm.from === tutStep.from && mm.to === tutStep.to)
+          if (m) {
+            setState((s) => applyMove(s, m))
+            setSelected(null)
+            setTut((c) => (c ? { ...c, step: c.step + 1 } : c))
+          }
+        } else if (global === tutStep.from) {
+          setSelected(global)
+        } else {
+          flashHint('请点击黄色闪光的目标落点（第 ' + tutStep.to + ' 梁）')
+        }
+        break
+      }
+      case 'enter': {
+        if (global === tutStep.to) {
+          pushSnapshot()
+          const m = legal.find((mm) => mm.from === null && mm.to === tutStep.to)
+          if (m) {
+            setState((s) => applyMove(s, m))
+            setTut((c) => (c ? { ...c, step: c.step + 1 } : c))
+          }
+        } else {
+          flashHint('请点击黄色闪烁的入局落点（第 ' + tutStep.to + ' 梁）')
+        }
+        break
+      }
+      case 'bearoff': {
+        if (selected === tutStep.from && global === tutStep.from) {
+          pushSnapshot()
+          const m = legal.find((mm) => mm.bearsOff && mm.from === tutStep.from)
+          if (m) {
+            setState((s) => applyMove(s, m))
+            setSelected(null)
+            setTut((c) => (c ? { ...c, step: c.step + 1 } : c))
+          }
+        } else if (global === tutStep.from) {
+          setSelected(global)
+        } else {
+          flashHint('请先选中第 ' + tutStep.from + ' 梁的马，再点一次拈出')
+        }
+        break
+      }
+      default:
+        break
+    }
+  }
+
+  const startInteractive = () => {
+    setShowTutorial(false)
+    setTutSeed((x) => x + 1)
+    setTut({ lesson: 0, step: 0 })
+    setReplayMode(false)
+  }
 
   // ---------- 人类点击走子（含反馈提示） ----------
   const pushSnapshot = () => setHistory((h) => [...h, serializeState(state)])
@@ -183,6 +311,10 @@ export default function App() {
   }
 
   const onPointClick = (global: number) => {
+    if (tut) {
+      handleTutClick(global)
+      return
+    }
     if (!humanTurn) {
       if (state.phase !== 'ended') flashHint(state.turn === playerColor ? '请稍候，正在掷骰…' : '当前不是你的回合（等待对方/AI）')
       return
@@ -395,6 +527,21 @@ export default function App() {
 
       {hint && <div className="hint-bar">{hint}</div>}
 
+      {tut && tutStep && (
+        <div className="tut-panel">
+          <div className="tut-panel-head">
+            <span className="tut-title">互动教学 · {getLesson(tut.lesson).title}</span>
+            <button className="tut-exit" onClick={tutExit}>退出教学</button>
+          </div>
+          <p className="tut-text">{tutStep.text}</p>
+          {tutStep.kind === 'note' && (
+            <button className="tut-next" onClick={tutAdvance}>
+              {tutStep.done ? '完成教学，开始游戏 →' : '继续 →'}
+            </button>
+          )}
+        </div>
+      )}
+
       <Board
         state={state}
         legal={humanTurn && !replayMode ? legal : []}
@@ -402,6 +549,8 @@ export default function App() {
         onPointClick={onPointClick}
         onDragFrom={onDragFrom}
         onDropTo={onDropTo}
+        tutFrom={tutStep && (tutStep.kind === 'pick' || tutStep.kind === 'place' || tutStep.kind === 'bearoff') ? tutStep.from : undefined}
+        tutTo={tutStep && (tutStep.kind === 'place' || tutStep.kind === 'enter') ? tutStep.to : undefined}
       />
 
       <div className="off-info">
@@ -410,7 +559,7 @@ export default function App() {
         <span className="score">比分：白 {matchScore.white} − {matchScore.black} 黑</span>
       </div>
 
-      <Tutorial open={showTutorial} onClose={closeTutorial} />
+      <Tutorial open={showTutorial} onClose={closeTutorial} onStartInteractive={startInteractive} />
     </div>
   )
 }

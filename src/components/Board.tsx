@@ -8,6 +8,9 @@ interface BoardProps {
   onPointClick?: (global: number) => void
   onDragFrom?: (global: number) => void
   onDropTo?: (global: number) => void
+  /** 互动教学：强引导点（期望点击的源/目标），高亮并添加点击指示光标 */
+  tutFrom?: number
+  tutTo?: number
 }
 
 /**
@@ -21,7 +24,7 @@ interface BoardProps {
  *   - selected（已选中起点）：白色粗框
  *   - 支持点击（点源→点目标）与 HTML5 拖拽（拖源→放目标）两种方式
  */
-export function Board({ state, legal, selected, onPointClick, onDragFrom, onDropTo }: BoardProps) {
+export function Board({ state, legal, selected, onPointClick, onDragFrom, onDropTo, tutFrom, tutTo }: BoardProps) {
   // 近端（下排）用白方视角编号 1..12，远端（上排）13..24（示意）
   const bottom = Array.from({ length: 12 }, (_, i) => i + 1) // 1..12
   const top = Array.from({ length: 12 }, (_, i) => 24 - i)   // 24..13
@@ -47,7 +50,9 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
       isMovable ? 'movable' : '',
       isTarget ? 'target' : '',
       isBearOffSource(g) ? 'bearoff' : '',
+      g === tutFrom || g === tutTo ? 'tut-guide' : '',
     ].filter(Boolean).join(' ')
+    const tutLabel = g === tutFrom ? '（点击这里）' : g === tutTo ? '（目标位置）' : ''
     return (
       <div
         key={g}
@@ -73,8 +78,9 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
           if (isTarget || isBearOffSource(g)) onDropTo?.(g)
         }}
         draggable={isMovable}
-        title={`梁 ${g}（白${white} / 黑${black}）`}
+        title={`梁 ${g}（白${white} / 黑${black}）${tutLabel}`}
       >
+        {tutLabel && <span className="tut-badge">👆 {tutLabel}</span>}
         <span className="count">{white + black}</span>
         <div className="stack">
           {Array.from({ length: white }).map((_, i) => (
