@@ -16,10 +16,21 @@
   flex-wrap: wrap;
 }
 
-.color-picker {
+.color-picker,
+.variant-picker,
+.ai-picker {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.controls select {
+  padding: 6px 10px;
+  border: 1px solid #c9bfa4;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  max-width: 240px;
 }
 
 .controls button {

@@ -31,6 +31,12 @@
   cursor: pointer;
 }
 
+.point.bearoff {
+  border-color: #9be29b;
+  background: rgba(155, 226, 155, 0.2);
+  cursor: pointer;
+}
+
 .point.selected {
   outline: 2px solid #fff;
 }
