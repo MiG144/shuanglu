@@ -4,7 +4,7 @@
   font-size: 26px;
   font-family: var(--font-serif);
   letter-spacing: 0.06em;
-  color: #2c2a25;
+  color: var(--c-ink);
 }
 
 .app-header-row {
@@ -20,19 +20,19 @@
 }
 
 .home-btn {
-  border: 1px solid #e2d8bf;
-  background: #fffdf8;
+  border: 1px solid var(--c-border);
+  background: var(--c-panel);
   border-radius: 8px;
   padding: 6px 12px;
   cursor: pointer;
   font-size: 13px;
   white-space: nowrap;
-  color: #5c5342;
+  color: var(--c-muted);
 }
 
 .app-header p {
   margin: 0 0 16px;
-  color: #7a6f5c;
+  color: var(--c-muted);
 }
 
 .controls {
@@ -64,13 +64,13 @@
 }
 
 .settings-panel {
-  background: #fffdf8;
-  color: #2c2a25;
+  background: var(--c-panel);
+  color: var(--c-ink);
   border-radius: 14px;
   max-width: 420px;
   width: 100%;
   padding: 18px 20px;
-  border: 1px solid #e2d8bf;
+  border: 1px solid var(--c-border);
   box-shadow: 0 10px 30px rgba(90, 70, 40, 0.18);
 }
 
@@ -92,7 +92,7 @@
   background: transparent;
   font-size: 17px;
   cursor: pointer;
-  color: #7a6f5c;
+  color: var(--c-muted);
 }
 
 .settings-grid {
@@ -109,12 +109,12 @@
 
 .settings-field label {
   font-size: 13px;
-  color: #7a6f5c;
+  color: var(--c-muted);
 }
 
 .settings-field select {
   padding: 9px 10px;
-  border: 1px solid #dcd2b8;
+  border: 1px solid var(--c-border);
   border-radius: 8px;
   font-size: 14px;
   background: #fff;
@@ -126,14 +126,14 @@
   padding: 10px;
   border: none;
   border-radius: 10px;
-  background: #b03a2e;
+  background: var(--c-primary);
   color: #fff8ee;
   font-size: 15px;
   cursor: pointer;
 }
 
 .settings-done:hover {
-  background: #c0392b;
+  background: var(--c-primary-dark);
 }
 
 @media (max-width: 640px) {
@@ -154,21 +154,21 @@
 
 .controls select {
   padding: 6px 10px;
-  border: 1px solid #dcd2b8;
+  border: 1px solid var(--c-border);
   background: #fff;
   border-radius: 8px;
   cursor: pointer;
   max-width: 240px;
-  color: #2c2a25;
+  color: var(--c-ink);
 }
 
 .controls button {
   padding: 6px 14px;
-  border: 1px solid #e2d8bf;
-  background: #fffdf8;
+  border: 1px solid var(--c-border);
+  background: var(--c-panel);
   border-radius: 8px;
   cursor: pointer;
-  color: #5c5342;
+  color: var(--c-muted);
 }
 
 .controls button:hover {
@@ -176,26 +176,26 @@
 }
 
 .controls button.active {
-  background: #b03a2e;
+  background: var(--c-primary);
   color: #fff8ee;
-  border-color: #b03a2e;
+  border-color: var(--c-primary);
 }
 
 .status-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fffdf8;
-  border: 1px solid #e2d8bf;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
   border-radius: 10px;
   padding: 10px 14px;
   margin-bottom: 16px;
   font-weight: 600;
-  color: #3a362c;
+  color: var(--c-ink);
 }
 
 .dice em {
-  color: #b8860b;
+  color: var(--c-gold);
   font-style: normal;
   margin-left: 6px;
 }
@@ -226,7 +226,7 @@
 }
 
 .move-quote {
-  color: #b03a2e;
+  color: var(--c-primary);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -285,13 +285,13 @@
   display: flex;
   justify-content: space-between;
   margin-top: 12px;
-  color: #7a6f5c;
+  color: var(--c-muted);
   font-size: 14px;
 }
 
 .off-info .score {
   font-weight: 700;
-  color: #2c2a25;
+  color: var(--c-ink);
 }
 
 .replay-bar {
@@ -316,7 +316,7 @@
 }
 
 .file-load {
-  color: #7a6f5c;
+  color: var(--c-muted);
   font-size: 13px;
   cursor: pointer;
   text-decoration: underline;

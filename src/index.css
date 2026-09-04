@@ -17,6 +17,20 @@
 :root {
   --font-serif: 'Shuanglu Serif', 'Noto Serif SC', 'Songti SC', 'STZhongsong', 'SimSun', serif;
   --font-sans: 'Shuanglu Sans', 'Noto Sans SC', system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  /* 统一配色方案：米白底 · 墨色 · 朱砂主色 · 金色 · 象牙白 */
+  --c-bg: #f7f1e5;
+  --c-ink: #322c22;
+  --c-muted: #6b6250;
+  --c-panel: #fffdf8;
+  --c-border: #e2d6bb;
+  --c-primary: #c03a2c;
+  --c-primary-dark: #a92c20;
+  --c-gold: #c99a2e;
+  --c-gold-deep: #b9861f;
+  --c-ivory: #f6efdc;
+  --c-lacquer: #c23b2a;
+  --c-lacquer-dark: #a92e1f;
 }
 
 * {
@@ -24,8 +38,8 @@
 }
 
 :root {
-  color: #2c2a25;
-  background: #f6f1e6;
+  color: var(--c-ink);
+  background: var(--c-bg);
   font-family: var(--font-sans);
   line-height: 1.5;
 }

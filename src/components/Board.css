@@ -1,37 +1,61 @@
-/* ============ 双陆棋盘：圆坑梁 · 月牙门 · 酒瓶棋子 · 浅暖扁平 ============ */
+/* ============ 双陆棋盘：朱砂红漆盘 · 金色圆坑 · 月牙门 · 红酒瓶棋子 ============ */
+
+/* 圆坑梁：棋盘上下两条边线内、均匀等距的同尺寸圆形标记（《谱双》"刻出圆坑为路"） */
 .board {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 4px 8px;
-  padding: 16px;
-  background: linear-gradient(180deg, #f0e4c8 0%, #e7d7b6 60%, #e0cfa9 100%);
+  gap: 2px 4px;
+  padding: 12px 16px 14px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.08), transparent 60%),
+    linear-gradient(180deg, var(--c-lacquer) 0%, var(--c-lacquer-dark) 100%);
   border-radius: 18px;
   margin-bottom: 16px;
-  border: 1px solid #cbb489;
+  border: 1px solid var(--c-gold-deep);
+  box-shadow: 0 6px 18px rgba(150, 45, 25, 0.22);
 }
 
-/* 圆坑梁：普通梁为圆形凹坑（《谱双》"刻出圆坑为路"），扁平化 */
+/* 每个梁：一个竖向格，格靠边的位置是圆坑标记，马往盘心堆叠 */
 .point {
   position: relative;
-  aspect-ratio: 1;
-  width: clamp(44px, 7.5vw, 68px);
-  justify-self: center;
-  align-self: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: default;
+  min-height: clamp(94px, 16vw, 152px);
   margin: 2px 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 42%, #e0cea8, #d3bf94);
-  box-shadow: inset 0 1px 3px rgba(120, 90, 40, 0.16);
-  transition: background 0.15s, outline-color 0.15s, transform 0.1s;
+  cursor: default;
+  border-radius: 10px;
   outline: 2px solid transparent;
-  outline-offset: 1px;
+  outline-offset: 2px;
+  transition: outline-color 0.15s, transform 0.1s, background 0.15s;
 }
 
-/* 上排：马靠梁顶堆叠（朝上，远离中央门槽） */
+/* 圆坑标记：金色圆形凹槽，贴合上/下边线 */
+.point::after {
+  content: '';
+  position: absolute;
+  width: clamp(30px, 4vw, 46px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 38%, #ecc96f, var(--c-gold-deep));
+  box-shadow: inset 0 1px 3px rgba(120, 78, 8, 0.4), 0 1px 1px rgba(255, 255, 255, 0.14);
+  z-index: 1;
+}
+
+.point-top::after {
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.point-bottom::after {
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 上排：马靠圆坑往下堆（朝盘心）；下排：马靠圆坑往上堆 */
 .point-top {
   justify-content: flex-start;
 }
@@ -40,62 +64,64 @@
   justify-content: flex-end;
 }
 
-/* 交互态：用清晰的描边 + 柔和填充，不用发光 */
+/* 交互态：朱砂盘上用清晰描边 + 轻微放大标示 */
 .point.movable {
-  background: radial-gradient(circle at 50% 42%, #f6d49a, #eeba63);
-  outline-color: #d8892c;
+  background: rgba(255, 214, 140, 0.14);
+  outline-color: #ffe0a0;
   cursor: pointer;
+  transform: scale(1.03);
 }
 
 .point.target {
-  background: radial-gradient(circle at 50% 42%, #f6e7a8, #eccd55);
-  outline-color: #c99a2e;
+  background: rgba(255, 220, 120, 0.22);
+  outline-color: #ffd25f;
   cursor: pointer;
   animation: target-pulse 1.1s ease-in-out infinite;
 }
 
 .point.bearoff {
-  background: radial-gradient(circle at 50% 42%, #b8e0c2, #8dc99c);
-  outline-color: #4f9d63;
+  background: rgba(150, 231, 176, 0.2);
+  outline-color: #8fe3a8;
   cursor: pointer;
 }
 
 .point.selected {
-  outline-color: #c0392b;
+  outline-color: #ffffff;
+  outline-width: 3px;
 }
 
 .point.tut-guide {
-  outline-color: #1d5fd0;
+  outline-color: #4f8ef0;
   animation: tut-pulse 1.1s ease-in-out infinite;
 }
 
 .point.last-move {
-  outline-color: #3a74d0;
+  outline-color: #ffcf5c;
 }
 
 @keyframes target-pulse {
-  0%, 100% { outline-color: #c99a2e; }
-  50% { outline-color: #f0d060; }
+  0%, 100% { outline-color: #ffd25f; }
+  50% { outline-color: #fff3c4; }
 }
 
 @keyframes tut-pulse {
-  0%, 100% { outline-color: #1d5fd0; }
-  50% { outline-color: #6f9de8; }
+  0%, 100% { outline-color: #4f8ef0; }
+  50% { outline-color: #8fb7f7; }
 }
 
 /* 计数角标 */
 .point .count {
   font-size: 11px;
-  color: rgba(90, 62, 29, 0.7);
+  color: rgba(255, 244, 220, 0.9);
   font-family: var(--font-serif, serif);
   position: absolute;
   z-index: 4;
 }
 
-.point-top .count { top: 2px; }
-.point-bottom .count { bottom: 2px; }
+.point-top .count { top: 6px; }
+.point-bottom .count { bottom: 6px; }
 
-/* 酒瓶棋子堆（《谱双》"上径小、下径大、底平"· 束腰） */
+/* 红酒瓶棋子堆（《谱双》"上径小、下径大、底平"· 束腰） */
 .stack {
   display: flex;
   flex-direction: column;
@@ -106,12 +132,12 @@
 
 .point-top .stack {
   justify-content: flex-start;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .point-bottom .stack {
   justify-content: flex-end;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .piece.bottle {
@@ -122,33 +148,21 @@
 }
 
 .piece.bottle .bottle-shape {
-  width: 24px;
-  height: 34px;
+  width: 20px;
+  height: 32px;
   overflow: visible;
 }
 
 .bottle-body.white {
-  fill: #f6efdd;
-  stroke: #b7a67e;
-  stroke-width: 1.2;
-}
-
-.bottle-knob.white {
-  fill: #f6efdd;
-  stroke: #b7a67e;
+  fill: var(--c-ivory);
+  stroke: #cbb98a;
   stroke-width: 1.2;
 }
 
 .bottle-body.black {
-  fill: #35322b;
-  stroke: #0f0d0a;
+  fill: #322d26;
+  stroke: #14110d;
   stroke-width: 1.2;
-}
-
-.bottle-knob.black {
-  fill: #4a453c;
-  stroke: #17140f;
-  stroke-width: 1.1;
 }
 
 /* 落子动画：最近一步目标格最后一枚入场 */
@@ -157,23 +171,23 @@
 }
 
 @keyframes arrive {
-  0% { transform: translateY(-10px) scale(0.5); opacity: 0.2; }
-  60% { transform: translateY(1.5px) scale(1.06); opacity: 1; }
+  0% { transform: translateY(-10px) scale(0.55); opacity: 0.2; }
+  60% { transform: translateY(1.5px) scale(1.05); opacity: 1; }
   100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* 门槽：中央月牙门 */
+/* 门槽：中央实心月牙门 */
 .board .gate-row {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 2px 6px 6px;
+  padding: 4px 6px 6px;
 }
 
 .gate-label {
-  color: rgba(90, 62, 29, 0.62);
+  color: rgba(255, 236, 208, 0.78);
   font-size: 12px;
   letter-spacing: 2px;
   flex-shrink: 0;
@@ -181,10 +195,9 @@
 
 .gate-crescent {
   flex: 0 0 auto;
-  color: #c99a2e;
-  fill: currentColor;
+  fill: var(--c-gold);
   margin: 0 auto;
-  opacity: 0.92;
+  filter: drop-shadow(0 1px 2px rgba(90, 40, 10, 0.35));
 }
 
 /* 教学与走子提示角标 */
@@ -193,7 +206,7 @@
   top: -8px;
   left: 50%;
   transform: translateX(-50%);
-  background: #1d5fd0;
+  background: #2f6bda;
   color: #fff;
   font-size: 11px;
   padding: 1px 8px;
@@ -206,7 +219,7 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  background: #3a74d0;
+  background: #d89b1e;
   color: #fff;
   font-size: 10px;
   padding: 1px 8px;
@@ -228,17 +241,20 @@
 /* 窄屏 */
 @media (max-width: 640px) {
   .board {
-    gap: 4px 6px;
-    padding: 12px;
+    gap: 2px 3px;
+    padding: 10px 12px 12px;
     border-radius: 14px;
     margin-bottom: 10px;
   }
   .point {
-    width: clamp(34px, 12vw, 52px);
+    min-height: clamp(72px, 13vw, 112px);
+  }
+  .point::after {
+    width: clamp(22px, 5vw, 34px);
   }
   .piece.bottle .bottle-shape {
-    width: 19px;
-    height: 27px;
+    width: 16px;
+    height: 26px;
   }
   .point .count {
     font-size: 9px;
@@ -247,7 +263,7 @@
     font-size: 11px;
   }
   .gate-crescent {
-    width: 92px;
-    height: 36px;
+    width: 118px;
+    height: 42px;
   }
 }

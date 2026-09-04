@@ -64,18 +64,16 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
       isLm ? 'last-move' : '',
     ].filter(Boolean).join(' ')
     const tutLabel = g === tutFrom ? '（点击这里）' : g === tutTo ? '（目标位置）' : ''
-    // 酒瓶/捣衣椎形棋子（《谱双》"上径小、下径大、底平、束腰"）：
-    // 宽平底 → 直鼓身 → 收颈 → 顶部圆钮
+    // 红酒瓶式棋子（《谱双》"上径小、下径大、底平、束腰"）：
+    // 直身圆柱（略收颈）→ 圆肩 → 细颈 → 平顶，无顶端圆球
     const Bottle = ({ color }: { color: 'white' | 'black' }) => (
       <span className={`piece bottle ${color}`} aria-hidden="true">
-        <svg viewBox="0 0 24 34" width="24" height="34" className="bottle-shape">
-          {/* 瓶身与颈：平底 → 直身 → 收颈 */}
+        <svg viewBox="0 0 24 38" width="24" height="38" className="bottle-shape">
+          {/* 瓶身：平底 → 直身 → 圆肩 → 细颈 → 平顶 */}
           <path
-            d="M4 31 L20 31 L20 24 C20 17 15 16 15 11.5 L15 9 C15 8 14.3 7.4 13.4 7.4 L10.6 7.4 C9.7 7.4 9 8 9 9 L9 11.5 C9 16 4 17 4 24 Z"
+            d="M4.6 36 L19.4 36 C20 36 20.4 35.6 20.4 35 L20.4 21 C20.4 15 15 14.4 15 9.4 L15 6.4 C15 5.4 14.3 4.6 13.2 4.6 L10.8 4.6 C9.7 4.6 9 5.4 9 6.4 L9 9.4 C9 14.4 3.6 15 3.6 21 L3.6 35 C3.6 35.6 4 36 4.6 36 Z"
             className={`bottle-body ${color}`}
           />
-          {/* 顶部圆钮 */}
-          <ellipse cx="12" cy="5.6" rx="3" ry="2.4" className={`bottle-knob ${color}`} />
         </svg>
       </span>
     )
@@ -128,11 +126,11 @@ export function Board({ state, legal, selected, onPointClick, onDragFrom, onDrop
       <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 4 }}>
         {top.map(renderPoint)}
       </div>
-      {/* 门槽：中央月牙门（《谱双》"月牙门"），两侧标示起点/终点 */}
+      {/* 门槽：中央实心月牙门（《谱双》"月牙门"），两侧标示起点/终点 */}
       <div className="gate-row">
         <span className="gate-label font-serif">梁頭</span>
-        <svg className="gate-crescent" viewBox="0 0 120 46" width="120" height="46" aria-hidden="true">
-          <path d="M8 42 C24 10 96 10 112 42 C94 20 26 20 8 42 Z" />
+        <svg className="gate-crescent" viewBox="0 0 120 56" width="150" height="52" aria-hidden="true">
+          <path d="M16 8 A 54 54 0 1 1 104 8 A 58 58 0 1 0 16 8 Z" />
         </svg>
         <span className="gate-label font-serif">梁末</span>
       </div>

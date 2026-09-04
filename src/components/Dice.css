@@ -18,8 +18,8 @@
   padding: 6px;
   width: 52px;
   height: 52px;
-  background: #fff;
-  border: 1px solid #dcd2b8;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
   border-radius: 10px;
   box-shadow: 0 1px 4px rgba(90, 70, 40, 0.12);
   animation: die-shake 0.7s ease-in-out;
@@ -50,11 +50,11 @@
 .die[data-pips='4'] .p1, .die[data-pips='4'] .p3, .die[data-pips='4'] .p7, .die[data-pips='4'] .p9,
 .die[data-pips='5'] .p1, .die[data-pips='5'] .p3, .die[data-pips='5'] .p5, .die[data-pips='5'] .p7, .die[data-pips='5'] .p9,
 .die[data-pips='6'] .p1, .die[data-pips='6'] .p3, .die[data-pips='6'] .p4, .die[data-pips='6'] .p6, .die[data-pips='6'] .p7, .die[data-pips='6'] .p9 {
-  background: #2b2b33;
+  background: var(--c-ink);
 }
 
 .dice-tag {
-  color: #b8860b;
+  color: var(--c-gold);
   font-style: normal;
   margin-left: 4px;
   font-size: 13px;

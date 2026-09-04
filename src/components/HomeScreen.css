@@ -18,7 +18,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #2c2a25;
+  color: var(--c-ink);
 }
 
 .home-seal {
@@ -49,13 +49,13 @@
   font-weight: 700;
   border: none;
   border-radius: 12px;
-  background: #b03a2e;
+  background: var(--c-primary);
   color: #fff8ee;
   cursor: pointer;
 }
 
 .home-start:hover {
-  background: #c0392b;
+  background: var(--c-primary-dark);
 }
 
 .home-actions-row {
@@ -67,12 +67,12 @@
 
 .home-actions-row button {
   padding: 8px 16px;
-  border: 1px solid #e2d8bf;
-  background: #fffdf8;
+  border: 1px solid var(--c-border);
+  background: var(--c-panel);
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
-  color: #5c5342;
+  color: var(--c-muted);
 }
 
 .home-actions-row button:hover {
@@ -80,8 +80,8 @@
 }
 
 .home-settings {
-  background: #fffdf8;
-  border: 1px solid #e2d8bf;
+  background: var(--c-panel);
+  border: 1px solid var(--c-border);
   border-radius: 12px;
   padding: 16px;
   display: grid;
@@ -92,7 +92,7 @@
 .home-settings-title {
   grid-column: 1 / -1;
   font-weight: 700;
-  color: #3a362c;
+  color: var(--c-ink);
   margin-bottom: 2px;
 }
 
@@ -104,16 +104,16 @@
 
 .home-field label {
   font-size: 13px;
-  color: #7a6f5c;
+  color: var(--c-muted);
 }
 
 .home-field select {
   padding: 9px 10px;
-  border: 1px solid #dcd2b8;
+  border: 1px solid var(--c-border);
   border-radius: 8px;
   font-size: 14px;
   background: #fff;
-  color: #2c2a25;
+  color: var(--c-ink);
 }
 
 .home-stats {
@@ -126,16 +126,16 @@
   background: #f6eeda;
   border-radius: 10px;
   font-size: 13px;
-  color: #5c5342;
+  color: var(--c-muted);
 }
 
 .home-stats b {
-  color: #3a362c;
+  color: var(--c-ink);
 }
 
 .home-stats-reset {
-  border: 1px solid #e2d8bf;
-  background: #fffdf8;
+  border: 1px solid var(--c-border);
+  background: var(--c-panel);
   border-radius: 8px;
   padding: 4px 12px;
   font-size: 12px;
@@ -157,7 +157,7 @@
 }
 
 .home-repo {
-  color: #b03a2e;
+  color: var(--c-primary);
   text-decoration: none;
   font-weight: 600;
 }
@@ -167,8 +167,8 @@
 }
 
 .home-sound {
-  border: 1px solid #e2d8bf;
-  background: #fffdf8;
+  border: 1px solid var(--c-border);
+  background: var(--c-panel);
   border-radius: 8px;
   padding: 3px 10px;
   cursor: pointer;
