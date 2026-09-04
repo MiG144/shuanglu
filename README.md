@@ -9,12 +9,24 @@
 
 ```bash
 npm install        # 安装依赖
-npm run dev        # 本地开发（Vite dev server）
+npm run dev        # 本地开发（Vite dev server，热更新）
 npm run build      # 构建（tsc --noEmit && vite build）
 npm run preview    # 预览构建产物
 npm test           # 运行引擎单元测试 + UI 冒烟测试（Vitest）
 npm run typecheck  # 仅类型检查
 ```
+
+## 一键启动（无需命令行）
+
+项目根目录有两个**双击即用**的入口（可复制到桌面）：
+
+- 「**启动双陆棋.vbs**」：双击后自动完成「构建（如需要）→ 启动本地服务 → 打开浏览器」；服务在隐藏窗口后台运行，关闭浏览器不影响，可再次双击重复打开。
+- 「**停止双陆棋.vbs**」：双击即结束后台服务（只结束本项目记录的预览进程 PID，不会误杀其它 node 进程）。
+
+> 说明：
+> - 首次双击启动会先执行 `npm run build`（约几秒），之后秒开；改过源码后再启动会自动重新构建。
+> - 若把整个项目文件夹移动到其它位置，请同步修改两个 .vbs 里的 `projDir = "D:\shuanglu"` 与 `pidFile` 路径。
+> - 服务默认端口 4173（被占用时自动 +1，浏览器打开的是实际端口）。
 
 ## 项目结构
 
