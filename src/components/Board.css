@@ -20,25 +20,60 @@
   gap: 4px;
   padding: 6px 4px;
   background: rgba(244, 240, 230, 0.12);
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   cursor: default;
   position: relative;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
 }
 
-.point.legal {
-  border-color: #ffd766;
-  background: rgba(255, 215, 102, 0.22);
+/* 可走动的源格：橙色脉冲，吸引玩家点击 */
+.point.movable {
+  border-color: #ffa94d;
+  background: rgba(255, 169, 77, 0.28);
   cursor: pointer;
+  animation: pulse-movable 1.2s ease-in-out infinite;
 }
 
-.point.bearoff {
-  border-color: #9be29b;
-  background: rgba(155, 226, 155, 0.2);
-  cursor: pointer;
-}
-
+/* 已选中起点：白色粗框 + 放大，目标格随后显示 */
 .point.selected {
-  outline: 2px solid #fff;
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.04);
+  z-index: 2;
+}
+
+/* 可选落点（走棋目标 / 入局落点）：黄色闪烁 */
+.point.target {
+  border-color: #ffd766;
+  background: rgba(255, 215, 102, 0.25);
+  cursor: pointer;
+  animation: pulse-legal 1s ease-in-out infinite;
+}
+
+/* 可拈出源格：绿色 */
+.point.bearoff {
+  border-color: #7ee08a;
+  background: rgba(126, 224, 138, 0.22);
+  cursor: pointer;
+}
+
+@keyframes pulse-movable {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 169, 77, 0.75); }
+  50% { box-shadow: 0 0 0 6px rgba(255, 169, 77, 0); }
+}
+
+@keyframes pulse-legal {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 102, 0.7); }
+  50% { box-shadow: 0 0 0 5px rgba(255, 215, 102, 0); }
+}
+
+/* 拖拽进行中：整体略降低透明度，目标更醒目 */
+.board.dragging .point {
+  opacity: 0.85;
+}
+.board.dragging .point.legal,
+.board.dragging .point.bearoff {
+  opacity: 1;
 }
 
 .point .count {

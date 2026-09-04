@@ -106,8 +106,11 @@ export default function App() {
     }
     if (state.phase === 'ended') return
 
-    // 无合法走子 → 轮空
+    // 无合法走子 → 轮空（对本方玩家给出说明）
     if (legal.length === 0) {
+      if (humanTurn) {
+        flashHint('本点数无法走子，自动跳过（需过门/被卡位/界外马不能入局）')
+      }
       busyRef.current = true
       const t = setTimeout(() => {
         setState((s) => {
@@ -157,43 +160,75 @@ export default function App() {
     }
   }, [state.phase, state.winner, state.doubled])
 
-  // ---------- 人类点击走子 ----------
+  // ---------- 人类点击走子（含反馈提示） ----------
   const pushSnapshot = () => setHistory((h) => [...h, serializeState(state)])
+  const [hint, setHint] = useState<string | null>(null)
+  const hintTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const flashHint = (msg: string) => {
+    setHint(msg)
+    if (hintTimer.current) clearTimeout(hintTimer.current)
+    hintTimer.current = setTimeout(() => setHint(null), 2600)
+  }
+
+  const tryApply = (movePath: { from: number | null; to: number | null } | undefined): boolean => {
+    if (!movePath) return false
+    const move = legal.find(
+      (m) => m.from === (movePath.from ?? null) && m.to === (movePath.to ?? null),
+    )
+    if (!move) return false
+    pushSnapshot()
+    setState((s) => applyMove(s, move))
+    setSelected(null)
+    return true
+  }
 
   const onPointClick = (global: number) => {
-    if (!humanTurn) return
-    if (state.phase === 'entry') {
-      const entry = legal.find((m) => m.from === null && m.to === global)
-      if (entry) {
-        pushSnapshot()
-        setState((s) => applyMove(s, entry))
-        setSelected(null)
-      }
+    if (!humanTurn) {
+      if (state.phase !== 'ended') flashHint(state.turn === playerColor ? '请稍候，正在掷骰…' : '当前不是你的回合（等待对方/AI）')
       return
     }
-    if (selected !== null && selected === global) {
-      const bearOff = legal.find((m) => m.bearsOff && m.from === global)
-      if (bearOff) {
-        pushSnapshot()
-        setState((s) => applyMove(s, bearOff))
-        setSelected(null)
-        return
-      }
+    // 入局阶段：只有黄色落点可点
+    if (state.phase === 'entry') {
+      if (tryApply({ from: null, to: global })) return
+      flashHint('界外有马需先入局，请点击黄色闪烁的落点')
+      return
     }
+    // 已选中起点：再次点击同一格 → 拈出；点击某落点 → 走子
     if (selected !== null) {
-      const move = legal.find((m) => m.from === selected && m.to === global)
-      if (move) {
-        pushSnapshot()
-        setState((s) => applyMove(s, move))
-        setSelected(null)
+      if (selected === global) {
+        if (tryApply({ from: selected, to: null })) return // 拈出
+        flashHint('这匹马不能拈出（需先过门或点数不匹配）')
         return
       }
+      if (tryApply({ from: selected, to: global })) return
+      // 点到别处：视为切换选择
     }
-    const hasFrom = legal.some((m) => m.from === global)
-    if (hasFrom) {
+    // 选择新起点
+    if (legal.some((m) => m.from === global)) {
       setSelected(global)
+      setHint(null)
+      return
+    }
+    // 点击无可走的格 → 明确反馈
+    const hasOppPiece = state.points[global - 1][state.turn === 'white' ? 'black' : 'white'] > 0
+    if (hasOppPiece) {
+      flashHint('这是对方的马，点击橙色脉冲的己方马开始')
     } else {
-      setSelected(null)
+      flashHint('这匹马本步不能走——请点击橙色脉冲的己方马')
+    }
+    setSelected(null)
+  }
+
+  // 拖拽：拖源 → 放目标
+  const onDragFrom = (global: number) => {
+    if (!humanTurn) return
+    if (legal.some((m) => m.from === global)) setSelected(global)
+  }
+  const onDropTo = (global: number) => {
+    if (!humanTurn || selected === null) return
+    // 先试走棋/入局，再试拈出（拖到自己的源格）
+    if (!tryApply({ from: selected, to: global })) {
+      if (global === selected) tryApply({ from: selected, to: null })
     }
   }
 
@@ -358,11 +393,15 @@ export default function App() {
         <div className="status-text">{status}</div>
       </div>
 
+      {hint && <div className="hint-bar">{hint}</div>}
+
       <Board
         state={state}
         legal={humanTurn && !replayMode ? legal : []}
         selected={selected}
         onPointClick={onPointClick}
+        onDragFrom={onDragFrom}
+        onDropTo={onDropTo}
       />
 
       <div className="off-info">
