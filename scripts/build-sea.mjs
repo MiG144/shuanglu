@@ -76,6 +76,31 @@ function buildOne(mainFile, outputName) {
 // 单 exe 方案：只打包启动 exe（停止通过页面按钮 / 关闭浏览器自动退出，无需第二个 exe）
 buildOne(path.join(outDir, 'sea-app.cjs'), startName)
 
+// Windows 平台注入应用图标（rcedit；否则保留默认 node 图标）
+if (process.platform === 'win32') {
+  const icoFile = path.join(outDir, 'app.ico')
+  if (!fs.existsSync(icoFile)) {
+    // 尝试从 public/pwa-512.png 生成（依赖本机 python+PIL；失败则跳过）
+    try {
+      const py = spawnSync('python', ['-c',
+        'from PIL import Image; im=Image.open(\'public/pwa-512.png\').convert(\'RGBA\'); im.save(\'dist-app/app.ico\', format=\'ICO\', sizes=[(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)])'],
+        { cwd: root, stdio: 'inherit' })
+      if (py.status !== 0) throw new Error('python 生成图标失败')
+    } catch {
+      console.log('[SEA] 未生成 app.ico（本机无 python/PIL），使用默认图标')
+    }
+  }
+  if (fs.existsSync(icoFile)) {
+    try {
+      const { rcedit } = await import('rcedit')
+      await rcedit(path.join(outDir, startName), { icon: icoFile })
+      console.log(`[SEA] ✓ 图标已注入 ${startName}`)
+    } catch (e) {
+      console.log('[SEA] 图标注入失败（忽略）：', e.message)
+    }
+  }
+}
+
 // 清理包内中间文件（sea-assets.cjs 保留以便重复构建；入口副本留在 dist-app）
 console.log('[SEA] 完成。')
 console.log(`[SEA] 启动：${path.join(outDir, startName)}`)
