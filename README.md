@@ -132,11 +132,6 @@ docs/
 
 ## 📄 许可
 
-**待定**：该仓库的许可协议还未选定。发布前请添加 `LICENSE` 文件并更新此处。
-常见选择：
+**MIT License**（见 `LICENSE`）。允许任何人自由使用、修改、分发、商用，仅需保留版权声明。
 
-- **[MIT License](https://choosealicense.com/licenses/mit/)**（宽松：允许任何人自由使用/修改/商用，仅需保留版权声明）—— 开源项目最常见；
-- **[GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/)**（传染性：衍生作品也必须开源）；
-- **All Rights Reserved**（不授使用许可，仅展示；不添加 LICENSE 文件即可）。
-
-> 快速动手：`npx license MIT -o "你的名字" > LICENSE` 生成 MIT 文件；或直接复制 [choosealicense.com](https://choosealicense.com/) 的文本到根目录 `LICENSE`。
+古籍说明：`docs/research/pushuang-ocr-fulltext.txt` 的 OCR 文本转录自**公版古籍《谱双》（宋·洪遵）**，规则整理为研究性笔记；`docs/欣赏编….pdf`（扫描原件）不随仓库分发。
