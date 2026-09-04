@@ -1,9 +1,19 @@
 # 双陆棋 · 打双陆
 
 中式双陆棋（打双陆）Web 小游戏。以宋代洪遵《谱双》五卷为规则依据——规则原文按**《欣赏编》十四卷（明·沈津编，明正德六年刊本）**扫描本识别核对，并以识典古籍电子本（翁同龢清抄本）互校。
-支持 PVE（人机对战）与 PVP（本地热座）。
+支持 PVE（人机对战）与 PVP（本地热座），内置新手教学与互动式实战教学。
 
 技术栈：**React + TypeScript + Vite**（规则引擎为纯逻辑、可测试、可序列化）。
+
+## 🎮 在线试玩
+
+部署到 GitHub Pages 后，直接访问：
+
+```
+https://<用户名>.github.io/<仓库名>/
+```
+
+构建产物使用相对路径 base，任意子路径托管均可正常加载。
 
 ## 常用命令
 
@@ -58,10 +68,10 @@ tests/
   engine.test.ts   # 规则引擎单元测试（17 项）
   ui-smoke.test.tsx # UI 渲染冒烟（SSR）测试（3 项）
 docs/
-  双陆规则草案-v0.1.md   # 需求期草案（含待定点，已被 v0.2 取代）
-  双陆规则定稿-v0.2.md    # 依据《谱双》（识典古籍本）定稿
-  双陆规则定稿-v0.3.md    # 依据《欣赏编》本《谱双》全书扫描核对定稿（含地域变体）
-  谱双-OCR全文-欣赏编本.txt  # 《欣赏编》本《谱双》五卷全文 OCR 文本（供校对）
+  README.md                  # 文档索引（推荐从这里进入）
+  rules/shuanglu-rules-v0.3.md  # ★ 现行规则定稿（权威依据）
+  research/pushuang-ocr-fulltext.txt  # 《谱双》五卷全文 OCR 文本（供校对）
+  archive/                   # 历史版本（v0.1 草案 / v0.2 初定稿）
 ```
 
 ## 功能清单
@@ -69,9 +79,10 @@ docs/
 - **对决模式**：人机对战（PVE，可执白/执黑、AI 随机/启发式）· 本地双人热座（PVP）
 - **变体选择**：平双陆（默认）· 回回（任意出两马）· 三梁（三骰）· 佛（十二马）· 下赞（双采赏一掷）· 大食（三骰）
 - **对局功能**：自动掷骰 · 轮空自动跳过 · 悔棋（任意步）· 计筹多局（先胜 1/2/3/5 局）· 存档（localStorage + 导出/读入 JSON）· 复盘（快照回放）
-- **规则提示**：入局/拈出/双采/赏一掷状态标注；可拈出格高亮
+- **新手教学**：静态图解手册 + 互动式实战教学（5 课：走子/打马/入局/拈出/双采）
+- **规则提示**：入局/拈出/双采/赏一掷状态标注；可走马/可落点/可拈出分级高亮；操作提示条
 
-## 规则要点（详见 docs/双陆规则定稿-v0.3.md）
+## 规则要点（详见 docs/rules/shuanglu-rules-v0.3.md）
 
 - 棋盘 24 梁、两门；白马自右归左、黑马自左归右。
 - 每方 15 马（佛双陆 12 马）；单梁上限 6 马。
@@ -104,3 +115,28 @@ docs/
 | 卷三 | 广州：罗嬴、下赞（双采走四+赏一掷）、不打（无骰喊彩）、佛（十二马）、三堆 |
 | 卷四 | 南番东夷：四架八、南皮、大食（三骰）、日本（归一为胜） |
 | 卷五 | 总录：常局格制、南北局例、事始、盘马（两门二十四路）、骰子、赌赛、名称、杂记 |
+
+## 🚀 发布到 GitHub
+
+仓库已内置发布所需的全部配置（`.github/workflows/deploy.yml`、相对路径 base、`.gitignore`/`.gitattributes`）。步骤：
+
+1. **创建远端仓库**（GitHub 网页新建，名字如 `shuanglu`，公开或私有均可）：
+   ```bash
+   git remote add origin https://github.com/<用户名>/<仓库名>.git
+   git push -u origin main
+   ```
+2. **启用 Pages**：仓库 Settings → Pages → Source 选 **GitHub Actions**（保存后无需额外操作）。
+3. **等待部署**：push 完成后 Actions 自动构建并部署（可手动用 Actions 页的 *Deploy to GitHub Pages* 触发），完成后显示在线地址 `https://<用户名>.github.io/<仓库名>/`。
+
+> 注意：`docs/欣赏编….pdf`（约 27MB 古籍扫描件）未入库（见 `.gitignore`），因此仓库体积很小；规则结论与 OCR 文本均在 `docs/`。
+
+## 📄 许可
+
+**待定**：该仓库的许可协议还未选定。发布前请添加 `LICENSE` 文件并更新此处。
+常见选择：
+
+- **[MIT License](https://choosealicense.com/licenses/mit/)**（宽松：允许任何人自由使用/修改/商用，仅需保留版权声明）—— 开源项目最常见；
+- **[GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/)**（传染性：衍生作品也必须开源）；
+- **All Rights Reserved**（不授使用许可，仅展示；不添加 LICENSE 文件即可）。
+
+> 快速动手：`npx license MIT -o "你的名字" > LICENSE` 生成 MIT 文件；或直接复制 [choosealicense.com](https://choosealicense.com/) 的文本到根目录 `LICENSE`。

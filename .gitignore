@@ -35,3 +35,10 @@ yarn-error.log*
 
 # 大体积古籍扫描件（原件在用户本地，不入库；规则结论在 docs/*.md 与 OCR 文本中）
 docs/*.pdf
+
+# 一键启动运行时文件
+server.pid
+
+# GitHub Pages 构建产物（若本地执行 release）
+.vite
+.release/

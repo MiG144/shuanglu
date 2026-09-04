@@ -5,6 +5,8 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // 相对路径 base：产物可在任意子路径部署（GitHub Pages 项目页 / Netlify / 本地 file 均可用）
+  base: './',
   plugins: [react()],
   resolve: {
     alias: {

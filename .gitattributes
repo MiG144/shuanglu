@@ -1,0 +1,19 @@
+# 统一换行符：文本文件在入库时按 LF 规范化（消除 CRLF 警告，跨平台一致）
+* text=auto eol=lf
+
+# 明确二进制类型
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+
+# 脚本类保持 LF
+*.sh text eol=lf
+*.command text eol=lf
+*.desktop text eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
